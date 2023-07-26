@@ -26,7 +26,7 @@ export default app;
 export function database() {
     return getFirestore(app);
   }
-
+  // Comment
   export const postEventToFirestore = async (eventTitle, eventStartTime) => {
     const db = getFirestore();
 
