@@ -1,0 +1,26 @@
+.time-list{
+    position: relative;
+    width: 12%;
+    font-size: 14px;
+    
+    
+}
+
+.time-element {
+    height: 100px;
+    position: relative;
+    
+      
+  }
+  
+  .time-element::before {
+    content: "";
+    position: absolute;
+    top: 9%;
+    right: -1020px;
+    width: 1020px;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.3);
+    transform: translateY(-50%);
+    z-index: 0;
+  }

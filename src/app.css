@@ -1,0 +1,66 @@
+
+*{
+  box-sizing:border-box;
+}
+
+.container{
+  display: flex;
+}
+
+.left-side{
+  height: 1000px;
+  width: 20%;
+  background-color: lightpink;
+}
+
+.middle-side{
+  width: 2%;
+  background-color: lightblue;
+}
+
+.right-side{
+  flex: 1;
+  background-color: lightgrey;
+  width:370px;
+  box-shadow: 0px 0px 35px -16px rgba(0,0,0,0.75);
+  font-family: 'Roboto', sans-serif;
+  padding: 20px 30px; 
+  color:#363b41; /*font colour*/
+  display: inline-bock;
+}
+
+.calendar-header {
+  border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+}
+
+
+.header-title{
+  color: black;
+  font-size:30px;
+  
+}
+
+.header-copy {
+  color: black;
+  font-size:20px;
+}
+.calendar-plan{
+    border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+}
+
+.calendar-events {
+  position: relative;
+  z-index: 1;
+}
+
+
+
+
+.scrollable-element{
+  display: flex;
+  overflow: auto;
+  height: 600px;
+  
+}
+
+
