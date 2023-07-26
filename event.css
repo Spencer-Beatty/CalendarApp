@@ -1,0 +1,24 @@
+.event-item {
+    position: absolute;
+    display: flex;
+    width: 120px;
+    
+    
+    cursor: pointer;
+    background-color: lightpink;
+    border-radius: 10px;
+    height: 60px;
+    
+    
+  }
+
+  .event-item:hover {
+    background-image: linear-gradient(-222deg, #FF8494, #ffa9b7);
+    box-shadow: 0px 0px 52px -18px rgba(0, 0, 0, 0.75);
+}
+
+/*
+
+Need to change the position to absolute to get in line with time
+
+*/
