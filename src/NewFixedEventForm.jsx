@@ -1,9 +1,9 @@
 import { useState } from 'react'
 
 
-export function NewEventForm(props) {
-    const [newEvent, setNewEvent] = useState("")
-    const [newTime, setNewTime] = useState("10")
+export function NewFixedEventForm(props) {
+    const [title, setTitle] = useState("test-meeting")
+    const [newTime, setNewTime] = useState("1:00")
     
     
     
@@ -11,7 +11,7 @@ export function NewEventForm(props) {
     function handleSubmit(e) {
         e.preventDefault();
         if(checkTime(newTime)){
-            props.addEvent(newEvent, newTime)
+            props.addEvent(title, newTime)
         }else{
             window.alert("Please enter the time in the correct format (e.g., '13:00' for 1 PM)");
             return null;
@@ -30,8 +30,8 @@ export function NewEventForm(props) {
     return (<><form className='p' onSubmit={handleSubmit}>
     <div>
     <label htmlFor='item'>New Item</label>
-    <input value={newEvent}
-    onChange={e => setNewEvent(e.target.value)}
+    <input value={title}
+    onChange={e => setTitle(e.target.value)}
     type="text" id="item"
     placeholder='Enter Event Name' required></input>
    

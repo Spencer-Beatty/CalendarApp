@@ -1,0 +1,12 @@
+
+
+.eventDisplay{
+    z-index: 2;
+    position: absolute;
+    top: 100px;
+    left:100px;
+    width: 80%;
+    height: 400px;
+    background-color: green;
+
+}

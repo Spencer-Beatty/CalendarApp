@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import "./app.css"
-import { NewEventForm } from "./NewEventForm"
+import { NewFixedEventForm } from "./NewFixedEventForm"
 import { NewFillerEventForm } from "./NewFillerEventForm"
 import { NewTaskForm } from './NewTaskForm'
 import { Event } from "./Event"
@@ -11,18 +11,25 @@ import firebaseApp, {postEventToFirestore, deleteEventFromFirestore, LoadEventsF
 import {postFillerEventToFirestore} from './FirebaseConfig.js';
 import {postTaskToFirestore} from './FirebaseConfig.js';
 
+import {EventDisplay} from "./EventDisplay"
+
 export default function App() {
-  
-  const [events, setEvents] = useState([])
+  // State variables for events
+  const [fixedEvents, setFixedEvents] = useState([])
   const [fillerEvents, setFillerEvents] = useState([])
   const [tasks, setTasks] = useState([])
+
+  // state variables for boolean displays
+  const [displayFixed, setDisplayFixed] = useState(false)
+  const [displayFiller, setDisplayFiller] = useState(false)
+  const [displayTasks, setDisplayTasks] = useState(false)
   
   
   useEffect(() => {
     const fetchEvents = async () => {
       try{
         const eventsFromData = await LoadEventsFromFirestore();
-        setEvents(eventsFromData);
+        setFixedEvents(eventsFromData);
       }
       catch(error){
         console.log(" Error fetching events");
@@ -34,24 +41,38 @@ export default function App() {
   }, []);
   
 
-  function removeEvent(id, docRefNum){
-    deleteEventFromFirestore(docRefNum)
-    setEvents(currentEvents => 
+  function removeFixedEvent(id, docRefNum){
+    deleteEventFromFirestore(docRefNum, 'fixedEvents')
+    setFixedEvents(currentEvents => 
       {return currentEvents.filter(event => event.id !== id)})
+  }
+
+  function removeTask(id, docRefNum){
+    deleteEventFromFirestore(docRefNum, 'tasks')
+    setTasks(currentTasks =>
+      {return currentTasks.filter(event => event.id !== id)})
+  }
+
+  function removeFillerEvent(id, docRefNum){
+    deleteEventFromFirestore(docRefNum, 'fillerEvent')
+    setFillerEvents(currentFillerEvents =>
+      {return currentFillerEvents.filter(event => event.id !== id)})
   }
 
   async function addEvent(newEvent, newStartTime, newEndTime){
     
     const docRefNum = await postEventToFirestore(newEvent, newStartTime);
     console.log(docRefNum)
-    setEvents(currentEvents => {return [...currentEvents,
+    setFixedEvents(currentEvents => {return [...currentEvents,
       {id:crypto.randomUUID(), title:newEvent, startTime:newStartTime, endTime:newEndTime+30, docRefNum:docRefNum}]})
   }
 
   async function addFillerEvent(title, duration, type){
       const docRefNum = await postFillerEventToFirestore(title, duration, type);
+      const id = crypto.randomUUID();
       setFillerEvents(currentFillerEvents => {return [...currentFillerEvents,
-      {id:crypto.randomUUID(), title:title, type:type, duration:duration, docRefNum:docRefNum}]})
+      {id:id, title:title, type:type, duration:duration, docRefNum:docRefNum}]})
+    
   }
 
   async function addTask(title, timeRequired, type){
@@ -60,7 +81,7 @@ export default function App() {
     {id:crypto.randomUUID(), title:title, timeRequired:timeRequired, type:type, docRefNum:docRefNum }]})
   }
 
-  console.log(events)
+  console.log(fixedEvents)
   
   
   return (
@@ -68,9 +89,17 @@ export default function App() {
     
   
   <div className='left-side'>
-  <NewEventForm addEvent={addEvent}></NewEventForm>
+  <NewFixedEventForm addEvent={addEvent}></NewFixedEventForm>
+  <button onClick={e => setDisplayFixed(!displayFixed)}>Display FixedEvents</button>
+  {displayFixed && (<EventDisplay eventType={"fixedEvent"}events={fixedEvents} removeEvent={removeFixedEvent}></EventDisplay>)}
+  
   <NewFillerEventForm addFillerEvent={addFillerEvent}></NewFillerEventForm>
+  <button onClick={e => setDisplayFiller(!displayFiller)}>Display FixedEvents</button>
+  {displayFiller && (<EventDisplay eventType={"fillerEvent"} events={fillerEvents} removeEvent={removeFillerEvent}></EventDisplay>)}
+  
   <NewTaskForm addTask={addTask}></NewTaskForm>
+  <button onClick={e => setDisplayTasks(!displayTasks)}>Display FixedEvents</button>
+  {displayTasks && (<EventDisplay eventType={"task"} events={tasks} removeEvent={removeTask}></EventDisplay>)}
   </div>
   
   <div className='middle-side'></div>
@@ -84,8 +113,9 @@ export default function App() {
         <TimeList className="time-list-element"></TimeList>
 
         <div className="calendar-events">
-          {events.map(event => {
-            return (<Event key={event.id} eventDetails={event} removeEvent={removeEvent}></Event>)
+          {fixedEvents.map(event => {
+            // This should have a remove event button passed through that deals with all possibel events
+            return (<Event eventType={"fixedEvent"} key={event.id} eventDetails={event} removeEvent={removeFixedEvent}></Event>)
           })}
         </div>
 

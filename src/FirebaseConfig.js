@@ -31,7 +31,7 @@ export function database() {
     const db = getFirestore();
 
     // Specify the collection where you want to store events
-    const eventsCollection = collection(db, 'events');
+    const eventsCollection = collection(db, 'fixedEvents');
 
     // Create an object with event details to be stored in Firestore
     const newEvent = {
@@ -56,7 +56,7 @@ export function database() {
   export const LoadEventsFromFirestore = async () => {
     const db = getFirestore();
 
-    const eventsCollection = collection(db, 'events');
+    const eventsCollection = collection(db, 'fixedEvents');
 
     try {
         const querySnapshot = await getDocs(eventsCollection);
@@ -76,10 +76,10 @@ export function database() {
 
  
 
-  export const deleteEventFromFirestore= async (docRefNum) => {
+  export const deleteEventFromFirestore= async (docRefNum, eventType) => {
     
     const db = getFirestore(app);
-    const eventsCollection = collection(db, 'events');
+    const eventsCollection = collection(db, eventType);
 
     try {
       console.log(docRefNum)
