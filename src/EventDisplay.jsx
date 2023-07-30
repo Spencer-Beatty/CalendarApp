@@ -6,12 +6,12 @@ export function EventDisplay(props){
 
 
     return(
-    <div className="eventDisplay">HEY
-    
+    <div className="event-display">
+    <ul className="event-display-container">
     {props.events.map(event => {
             // This should have a remove event button passed through that deals with all possibel events
-            return (<Event eventType={props.eventType} key={event.id} eventDetails={event} removeEvent={props.removeEvent}></Event>)
+            return (<Event baseClassName={"displayed-event"} eventType={props.eventType} key={event.id} eventDetails={event} removeEvent={props.removeEvent} ></Event>)
           })}
-    
+    </ul>
     </div>)
 }

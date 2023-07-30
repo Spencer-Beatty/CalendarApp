@@ -1,21 +1,45 @@
 .event-item {
-    position: absolute;
-    display: flex;
-    width: 120px;
+   
     
     
+    
+  flex: auto;
     cursor: pointer;
     background-color: lightpink;
     border-radius: 10px;
     height: 60px;
+    white-space: nowrap;
+   
+   
+   
+
+  }
+
+  .individual-time-placeholder{
+    position: relative;
+    width:300px;
+  }
+
+
+  .time-placeholder{
+    position: relative;
+     flex: auto;
+    font-size: 14px;
+    display: block;
     
+}
+
+  .event-container{
     
+    display: flex;
+    width: 15px;
   }
 
   .event-item:hover {
     background-image: linear-gradient(-222deg, #FF8494, #ffa9b7);
     box-shadow: 0px 0px 52px -18px rgba(0, 0, 0, 0.75);
 }
+
 
 /*
 

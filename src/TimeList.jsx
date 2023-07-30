@@ -8,6 +8,7 @@ export function TimeList() {
         <ul className="time-list">
             {hours.map(hour => (
                 <li className="time-element" key={hour} style={{ top: `${hour * 100}px`, position: 'absolute' }}>
+                    
                     {hour}:00
                 </li>
             ))}

@@ -9,7 +9,7 @@
 .time-element {
     height: 100px;
     position: relative;
-    
+    background-color: red;
       
   }
   
@@ -22,5 +22,7 @@
     height: 1px;
     background-color: rgba(0, 0, 0, 0.3);
     transform: translateY(-50%);
-    z-index: 0;
+    
   }
+
+ 

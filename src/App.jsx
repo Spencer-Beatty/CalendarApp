@@ -12,6 +12,7 @@ import {postFillerEventToFirestore} from './FirebaseConfig.js';
 import {postTaskToFirestore} from './FirebaseConfig.js';
 
 import {EventDisplay} from "./EventDisplay"
+import TimePlaceholder from './TimePlaceholder'
 
 export default function App() {
   // State variables for events
@@ -29,7 +30,9 @@ export default function App() {
     const fetchEvents = async () => {
       try{
         const eventsFromData = await LoadEventsFromFirestore();
-        setFixedEvents(eventsFromData);
+        setFixedEvents(eventsFromData.fixedEvents);
+        setFillerEvents(eventsFromData.fillerEvents);
+        setTasks(eventsFromData.tasks);
       }
       catch(error){
         console.log(" Error fetching events");
@@ -112,12 +115,11 @@ export default function App() {
         
         <TimeList className="time-list-element"></TimeList>
 
-        <div className="calendar-events">
-          {fixedEvents.map(event => {
-            // This should have a remove event button passed through that deals with all possibel events
-            return (<Event eventType={"fixedEvent"} key={event.id} eventDetails={event} removeEvent={removeFixedEvent}></Event>)
-          })}
-        </div>
+        
+        <TimePlaceholder className="time-placeholder" events={fixedEvents}></TimePlaceholder>
+        <TimePlaceholder className="time-placeholder" events={fixedEvents}></TimePlaceholder>
+
+        
 
       </div>
     
@@ -140,3 +142,10 @@ export default function App() {
             <h3>{event.startTime} </h3>
             <button onClick={()=>removeEvent(event.id)}>Delete</button>
           </li>*/
+
+          /*<div className="calendar-events">
+          {fixedEvents.map(event => {
+            // This should have a remove event button passed through that deals with all possible events
+            return (<Event eventType={"fixedEvent"} key={event.id} eventDetails={event} removeEvent={removeFixedEvent} baseClassName={"event-item"}></Event>)
+          })}
+        </div>*/

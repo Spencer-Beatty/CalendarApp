@@ -54,19 +54,47 @@ export function database() {
   };
 
   export const LoadEventsFromFirestore = async () => {
+
+    // Will load all data and then pass it back to be set to all state variables
     const db = getFirestore();
 
-    const eventsCollection = collection(db, 'fixedEvents');
+    const fixedEventsCollection = collection(db, 'fixedEvents');
+    const fillerEventsCollection = collection(db, 'fillerEvents');
+    const tasksCollection = collection(db, 'tasks');
+
+    
 
     try {
-        const querySnapshot = await getDocs(eventsCollection);
-        
-        const events = querySnapshot.docs.map((doc) => ({
+        const fixedQuerySnapshot = await getDocs(fixedEventsCollection);
+        const fillerQuerySnapshot = await getDocs(fillerEventsCollection);
+        const tasksQuerySnapshot = await getDocs(tasksCollection);
+
+
+        const fixedEvents = fixedQuerySnapshot.docs.map((doc) => ({
         
             id:crypto.randomUUID(), docRefNum: doc.id, ... doc.data()
         }))
 
-        return events;
+        const fillerEvents = fillerQuerySnapshot.docs.map((doc) => ({
+        
+          id:crypto.randomUUID(), docRefNum: doc.id, ... doc.data()
+      }))
+
+      const tasks = tasksQuerySnapshot.docs.map((doc) => ({
+        
+        id:crypto.randomUUID(), docRefNum: doc.id, ... doc.data()
+    }))
+
+
+
+        const eventsHolder=  {
+          fixedEvents: fixedEvents,
+          fillerEvents : fillerEvents,
+          tasks : tasks
+    
+        }
+
+        return eventsHolder;
     }catch(error){
         console.log("Load from firebase failed");
         throw error;
@@ -97,7 +125,7 @@ export function database() {
     const db = getFirestore();
 
     // Specify the collection where you want to store events
-    const eventsCollection = collection(db, 'fillerEvent');
+    const eventsCollection = collection(db, 'fillerEvents');
 
     const newFillerEvent = {
         title: title,
