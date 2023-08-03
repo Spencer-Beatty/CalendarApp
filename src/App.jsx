@@ -12,13 +12,19 @@ import {postFillerEventToFirestore} from './FirebaseConfig.js';
 import {postTaskToFirestore} from './FirebaseConfig.js';
 
 import {EventDisplay} from "./EventDisplay"
-import TimePlaceholder from './TimePlaceholder'
+
+import {CalendarEvent} from "./CalendarEvent"
+import "./calendar.css"
+
+
 
 export default function App() {
   // State variables for events
   const [fixedEvents, setFixedEvents] = useState([])
   const [fillerEvents, setFillerEvents] = useState([])
   const [tasks, setTasks] = useState([])
+  
+  const[calendarTimes, setCalendarTimes] = useState([])
 
   // state variables for boolean displays
   const [displayFixed, setDisplayFixed] = useState(false)
@@ -84,8 +90,18 @@ export default function App() {
     {id:crypto.randomUUID(), title:title, timeRequired:timeRequired, type:type, docRefNum:docRefNum }]})
   }
 
-  console.log(fixedEvents)
+  function initializeCalendar(){
+    // This should also slot in filler and task events but at later date.
+    // As well this should strip apart fixed events and fill calendarTimes with
+    // raw data points
+    setCalendarTimes(fixedEvents);
+  }
+
+  console.log(calendarTimes)
   
+
+
+
   
   return (
     <div className="container">
@@ -103,6 +119,8 @@ export default function App() {
   <NewTaskForm addTask={addTask}></NewTaskForm>
   <button onClick={e => setDisplayTasks(!displayTasks)}>Display FixedEvents</button>
   {displayTasks && (<EventDisplay eventType={"task"} events={tasks} removeEvent={removeTask}></EventDisplay>)}
+
+  <button onClick={e => setCalendarTimes(fixedEvents)}> <h1>Initialize Calendar</h1></button>
   </div>
   
   <div className='middle-side'></div>
@@ -111,15 +129,48 @@ export default function App() {
 
       <HeaderInfo></HeaderInfo>
 
-      <div className='scrollable-element'>
+      <div className='calendar'>
         
-        <TimeList className="time-list-element"></TimeList>
+        
 
-        
-        <TimePlaceholder className="time-placeholder" events={fixedEvents}></TimePlaceholder>
-        <TimePlaceholder className="time-placeholder" events={fixedEvents}></TimePlaceholder>
 
+
+        <div className='days'>
+          <div className="day mon">
+            <div className="date">
+              <p className="date-num">9 </p>
+              <p className="date-day">Mon</p>
+            </div>
+            <div className="events">
+              <div className="event start-2 end-5 securities">
+                <p className="title">Securities Regulation</p>
+                <p className="time" top={"40px"}>2 PM - 5 PM</p>
+              </div>
+              <div className="event start-2 end-5 securities">
+                <p className="title">Securities Regulation</p>
+                <p className="time">2 PM - 5 PM</p>
+              </div>
+            </div>
+          </div>
+          <div className="day Tues">
+            <div className="date">
+              <p className="date-num">10 </p>
+              <p className="date-day">Tues</p>
+            </div>
+            <div className="events">
+              <CalendarEvent startTime={"1:00"} endTime={"2:00"}></CalendarEvent>
+             
+              <div className="event start-2 end-5 securities">
+                <p className="title">Securities Regulation</p>
+                <p className="time">2 PM - 5 PM</p>
+              </div>
+            </div>
+          </div>
+          
+        </div>
         
+        
+
 
       </div>
     
@@ -149,3 +200,7 @@ export default function App() {
             return (<Event eventType={"fixedEvent"} key={event.id} eventDetails={event} removeEvent={removeFixedEvent} baseClassName={"event-item"}></Event>)
           })}
         </div>*/
+
+        /*<CalendarEvents  events={fixedEvents}></CalendarEvents>*/
+
+        /*<TimeList className="time-list-element"></TimeList>*/

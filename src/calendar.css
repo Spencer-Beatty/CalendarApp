@@ -1,0 +1,83 @@
+.calendar{
+    
+    display: block;
+    overflow: auto;
+    height: 600px;
+    background-color: white;
+    margin: 2rem;
+    gap: 10px;
+    grid-template-columns: auto 1fr;
+   
+    
+  }
+
+  .days {
+    display: flex;
+    
+  }
+
+  .day {
+    border: 1px solid black;
+    gap: 10px;
+    gap: 10px;
+    flex: auto;
+    font-size: 15px;
+    margin: 5px;
+  }
+
+
+
+  .date {
+    height: 60px;
+    display: block;
+    gap: 1em;
+    background-color: lightsalmon;
+  }
+
+  .date-num {
+    font-size: 3rem;
+    font-weight: 600;
+    display: inline;
+  }
+  
+  .date-day {
+    display: inline;
+    font-size: 3rem;
+    font-weight: 100;
+  }
+
+  .events {
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    border-radius: 5px;
+    background-color: beige;
+    
+    
+ }
+
+  .event {
+   position: absolute;
+   background-color: lightgreen;
+   margin-bottom: 10px;
+   min-width: 100px;
+   border-radius: 5px;
+   padding: 10px;
+   display:flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   
+    
+  }
+
+  .title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    
+  }
+
+ 
+
+
+
