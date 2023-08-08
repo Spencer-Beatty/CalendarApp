@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect , useRef} from 'react'
 import "./app.css"
 import { NewFixedEventForm } from "./NewFixedEventForm"
 import { NewFillerEventForm } from "./NewFillerEventForm"
@@ -15,10 +15,18 @@ import {EventDisplay} from "./EventDisplay"
 
 import {CalendarEvent} from "./CalendarEvent"
 import "./calendar.css"
+import { breakdownEventDescription } from './PythonCommunicaton'
 
 
 
 export default function App() {
+// flask variables
+
+
+
+
+
+
   // State variables for events
   const [fixedEvents, setFixedEvents] = useState([])
   const [fillerEvents, setFillerEvents] = useState([])
@@ -31,11 +39,17 @@ export default function App() {
   const [displayFiller, setDisplayFiller] = useState(false)
   const [displayTasks, setDisplayTasks] = useState(false)
   
-  
+  const dateRef = useRef(null)
+  const calendarRef = useRef(null)
+
+
   useEffect(() => {
     const fetchEvents = async () => {
       try{
+        
+        
         const eventsFromData = await LoadEventsFromFirestore();
+        
         setFixedEvents(eventsFromData.fixedEvents);
         setFillerEvents(eventsFromData.fillerEvents);
         setTasks(eventsFromData.tasks);
@@ -48,6 +62,19 @@ export default function App() {
     fetchEvents();
 
   }, []);
+
+  function callBreakdown(eventDescription){
+    console.log("breakdown called")
+    const data = async () => {
+      try{
+        const proccessedEventDescription = await breakdownEventDescription(eventDescription);
+        console.log(proccessedEventDescription)
+      }catch(error){
+        console.log("Error " , error)
+      }
+    }
+    data();
+  }
   
 
   function removeFixedEvent(id, docRefNum){
@@ -90,6 +117,9 @@ export default function App() {
     {id:crypto.randomUUID(), title:title, timeRequired:timeRequired, type:type, docRefNum:docRefNum }]})
   }
 
+
+  
+
   function initializeCalendar(){
     // This should also slot in filler and task events but at later date.
     // As well this should strip apart fixed events and fill calendarTimes with
@@ -97,8 +127,27 @@ export default function App() {
     setCalendarTimes(fixedEvents);
   }
 
-  console.log(calendarTimes)
+
   
+
+  const handleScrollDate = () => {
+    if(calendarRef.current) {
+      calendarRef.current.scrollLeft = dateRef.current.scrollLeft;
+    }
+  };
+
+  const handleScrollCalendar = () => {
+    if(dateRef.current) {
+       dateRef.current.scrollLeft = calendarRef.current.scrollLeft;
+    }
+  };
+
+
+ 
+
+
+  console.log(calendarTimes)
+
 
 
 
@@ -120,48 +169,62 @@ export default function App() {
   <button onClick={e => setDisplayTasks(!displayTasks)}>Display FixedEvents</button>
   {displayTasks && (<EventDisplay eventType={"task"} events={tasks} removeEvent={removeTask}></EventDisplay>)}
 
-  <button onClick={e => setCalendarTimes(fixedEvents)}> <h1>Initialize Calendar</h1></button>
+  
   </div>
   
   <div className='middle-side'></div>
 
   <div className="right-side">
 
-      <HeaderInfo></HeaderInfo>
+      <HeaderInfo callBreakdown={callBreakdown}></HeaderInfo>
 
       <div className='calendar'>
         
-        
 
-
-
-        <div className='days'>
-          <div className="day mon">
-            <div className="date">
+      <div className='date-container'
+        ref={dateRef}
+        onScroll={handleScrollDate}>
+      <div className='date'>
+      
+      </div>
+      <div className="date">
               <p className="date-num">9 </p>
               <p className="date-day">Mon</p>
             </div>
+      <div className="date">
+              <p className="date-num">10 </p>
+              <p className="date-day">Tues</p>
+      </div>
+      <div className="date">
+              <p className="date-num">11 </p>
+              <p className="date-day">Wed</p>
+      </div>
+      <div className="date">
+              <p className="date-num">12 </p>
+              <p className="date-day">Thur</p>
+      </div>
+      </div> 
+
+
+        <div className='days'
+        ref={calendarRef}
+        onScroll={handleScrollCalendar}>
+          <TimeList></TimeList>
+          <div className='day Mon'>
             <div className="events">
               <div className="event start-2 end-5 securities">
                 <p className="title">Securities Regulation</p>
                 <p className="time" top={"40px"}>2 PM - 5 PM</p>
               </div>
-              <div className="event start-2 end-5 securities">
-                <p className="title">Securities Regulation</p>
-                <p className="time">2 PM - 5 PM</p>
-              </div>
+              
             </div>
           </div>
           <div className="day Tues">
-            <div className="date">
-              <p className="date-num">10 </p>
-              <p className="date-day">Tues</p>
-            </div>
             <div className="events">
               <CalendarEvent startTime={"1:00"} endTime={"2:00"}></CalendarEvent>
              
               <div className="event start-2 end-5 securities">
-                <p className="title">Securities Regulation</p>
+                <p className="title"></p>
                 <p className="time">2 PM - 5 PM</p>
               </div>
             </div>

@@ -1,12 +1,13 @@
 .time-list{
     position: relative;
-    width: 12%;
+    width: 50px;
     font-size: 14px;
     
     
 }
 
 .time-element {
+    width: 50px;
     height: 100px;
     position: relative;
     background-color: red;
