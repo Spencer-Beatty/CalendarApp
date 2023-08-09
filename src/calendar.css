@@ -78,9 +78,9 @@
    position: relative;
    background-color: lightgreen;
    margin-bottom: 10px;
-   width: 300px;
+   width: 200px;
    border-radius: 5px;
-   padding-right: 30px;
+  
    display:flex;
    justify-content: center;
    align-items: left;

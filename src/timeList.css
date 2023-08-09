@@ -14,16 +14,4 @@
       
   }
   
-  .time-element::before {
-    content: "";
-    position: absolute;
-    top: 9%;
-    right: -1020px;
-    width: 1020px;
-    height: 1px;
-    background-color: rgba(0, 0, 0, 0.3);
-    transform: translateY(-50%);
-    
-  }
-
  

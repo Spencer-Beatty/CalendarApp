@@ -11,7 +11,7 @@ export function NewFixedEventForm(props) {
     function handleSubmit(e) {
         e.preventDefault();
         if(checkTime(newTime)){
-            props.addEvent(title, newTime)
+            props.addFixedEvents(title, newTime)
         }else{
             window.alert("Please enter the time in the correct format (e.g., '13:00' for 1 PM)");
             return null;

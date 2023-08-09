@@ -27,7 +27,7 @@ export function database() {
     return getFirestore(app);
   }
   // Comment
-  export const postEventToFirestore = async (eventTitle, eventStartTime) => {
+  export const postEventToFirestore = async (title, startTime, endTime, date) => {
     const db = getFirestore();
 
     // Specify the collection where you want to store events
@@ -35,8 +35,10 @@ export function database() {
 
     // Create an object with event details to be stored in Firestore
     const newEvent = {
-      title: eventTitle,
-      startTime: eventStartTime,
+      title: title,
+      startTime: startTime,
+      endTime: endTime,
+      date: date
     };
 
     try {

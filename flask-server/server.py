@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import re
 
 
 
@@ -115,14 +116,82 @@ def members():
             entityList[2].append(word)
             #Check for date words
         
-    #Step 2: put those parts into eventPrototype
+    #Step 2: parse these parts into strings
 
-    eventPrototype["title"] = "Hello"
+    title = " ".join(entityList[0])
+    
+    times = getTimes(entityList[1])
+    startTime = times[0]
+    endTime = times[1]
+    date = " ".join(entityList[2])
 
-    #Step 3: return eventPrototype
+    #Step 3: put these strings in 
+    eventPrototype["title"] = title
+    eventPrototype["startTime"] = startTime
+    eventPrototype["endTime"] = endTime
+    eventPrototype["date"] = date
 
-    return entityList
+
+
+    return eventPrototype
     #return eventPrototype
+
+
+
+
+def getTimes(lst):
+    """
+    input:
+    list of strings : lst
+    output:
+    list size(2) with startTime [0], endTime [1]
+
+    common forms Times looks for:
+    11 am to 12:30 -> 11 am , 12:30 pm
+    4-5 pm
+    3 pm
+    10 am
+    10-11:30 am
+    """
+
+    # Join list of strings into one string
+    s = ' '.join(lst)
+
+    # List to store results
+    times = ["", "","",""]
+
+    # Search for the time patterns
+   
+    match = re.match(r"((?P<first_time>\d\d:\d\d|\d:\d\d|\d\d|\d) ?(?P<first_meridiem>am|pm)?) ?(to|-)? ?((?P<second_time>\d\d:\d\d|\d:\d\d|\d\d|\d) ?(?P<second_meridiem>am|pm)?)?",s)
+    if match:
+        times[0] = standardizeTime(match.group("first_time"))
+        times[1] = standardizeTime(match.group("second_time"))
+        times[2] = match.group("first_meridiem")
+        times[3] = match.group("second_meridiem")
+
+        # reorganize the times into 24 format based on meridian time
+
+    return times
+
+def standardizeTime(time):
+    if time == None or re.match(r"\d\d:\d\d|\d:\d\d",time):
+        return time
+    elif(re.match(r"\d\d|\d",time)):
+        return time+ ":00"
+    else:
+        return time
+    
+
+
+# Test cases
+print(getTimes(["11 am to 12:30"]))       # ['11 am', '12:30']
+print(getTimes(["4-5 pm"]))               # ['4', '5 pm']
+print(getTimes(["3 pm"]))                 # ['3 pm', '']
+print(getTimes(["10 am"]))                # ['10 am', '']
+print(getTimes(["10-11:30 am"]))          # ['10', '11:30 am']
+print(getTimes(["10:00-11:30 am"]))          # ['10', '11:30 am']
+print(getTimes(["1:00-11:30 am"]))          # ['10', '11:30 am']
+print(getTimes(["3:00pm"]))
 
 
 if __name__ == "__main__":

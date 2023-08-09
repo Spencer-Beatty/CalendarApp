@@ -18,14 +18,20 @@ import "./calendar.css"
 import { breakdownEventDescription } from './PythonCommunicaton'
 
 
+function getDate() {
+  const today = new Date();
+  const month = today.getMonth() + 1;
+  const year = today.getFullYear();
+  const date = today.getDate();
+  return `${month}/${date}/${year}`;
+}
+
+
 
 export default function App() {
-// flask variables
 
 
-
-
-
+  ///----------Old Variables---------------
 
   // State variables for events
   const [fixedEvents, setFixedEvents] = useState([])
@@ -39,6 +45,11 @@ export default function App() {
   const [displayFiller, setDisplayFiller] = useState(false)
   const [displayTasks, setDisplayTasks] = useState(false)
   
+
+  // state variables for date
+  const [currentDate, setCurrentDate] = useState(getDate());
+
+  // Variables to align scroll-left styles
   const dateRef = useRef(null)
   const calendarRef = useRef(null)
 
@@ -46,7 +57,7 @@ export default function App() {
   useEffect(() => {
     const fetchEvents = async () => {
       try{
-        
+        // Loads events from Firestore
         
         const eventsFromData = await LoadEventsFromFirestore();
         
@@ -63,12 +74,19 @@ export default function App() {
 
   }, []);
 
+  //Date function
+  
+
+  //Function takes event sentence as input and adds an event to fixedEvents
   function callBreakdown(eventDescription){
     console.log("breakdown called")
     const data = async () => {
       try{
-        const proccessedEventDescription = await breakdownEventDescription(eventDescription);
-        console.log(proccessedEventDescription)
+        //Processed Event Decription (ped)
+        const ped = await breakdownEventDescription(eventDescription);
+        
+        //Add new event here
+        addFixedEvents(ped.title, ped.startTime, ped.endTime, ped.date);
       }catch(error){
         console.log("Error " , error)
       }
@@ -76,33 +94,37 @@ export default function App() {
     data();
   }
   
-
+  //Function removes fixed Events from firebase as well as state variables
   function removeFixedEvent(id, docRefNum){
     deleteEventFromFirestore(docRefNum, 'fixedEvents')
     setFixedEvents(currentEvents => 
       {return currentEvents.filter(event => event.id !== id)})
   }
 
+  //Similar remove but for tasks
   function removeTask(id, docRefNum){
     deleteEventFromFirestore(docRefNum, 'tasks')
     setTasks(currentTasks =>
       {return currentTasks.filter(event => event.id !== id)})
   }
 
+  //Similar remove but for filler events
   function removeFillerEvent(id, docRefNum){
     deleteEventFromFirestore(docRefNum, 'fillerEvent')
     setFillerEvents(currentFillerEvents =>
       {return currentFillerEvents.filter(event => event.id !== id)})
   }
 
-  async function addEvent(newEvent, newStartTime, newEndTime){
+  //Add for fixedEvents
+  async function addFixedEvents(title, startTime, endTime, date){
     
-    const docRefNum = await postEventToFirestore(newEvent, newStartTime);
+    const docRefNum = await postEventToFirestore(title, startTime, endTime, date);
     console.log(docRefNum)
     setFixedEvents(currentEvents => {return [...currentEvents,
-      {id:crypto.randomUUID(), title:newEvent, startTime:newStartTime, endTime:newEndTime+30, docRefNum:docRefNum}]})
+      {id:crypto.randomUUID(), title:title, startTime:startTime, endTime:endTime, date:date, docRefNum:docRefNum}]})
   }
 
+  //Add for fillerEvents
   async function addFillerEvent(title, duration, type){
       const docRefNum = await postFillerEventToFirestore(title, duration, type);
       const id = crypto.randomUUID();
@@ -111,6 +133,7 @@ export default function App() {
     
   }
 
+  //Add for tasks
   async function addTask(title, timeRequired, type){
     const docRefNum = await postTaskToFirestore(title, timeRequired, type);
     setTasks(currentTasks => {return [...currentTasks,
@@ -120,12 +143,7 @@ export default function App() {
 
   
 
-  function initializeCalendar(){
-    // This should also slot in filler and task events but at later date.
-    // As well this should strip apart fixed events and fill calendarTimes with
-    // raw data points
-    setCalendarTimes(fixedEvents);
-  }
+  
 
 
   
@@ -157,7 +175,7 @@ export default function App() {
     
   
   <div className='left-side'>
-  <NewFixedEventForm addEvent={addEvent}></NewFixedEventForm>
+  <NewFixedEventForm addFixedEvents={addFixedEvents}></NewFixedEventForm>
   <button onClick={e => setDisplayFixed(!displayFixed)}>Display FixedEvents</button>
   {displayFixed && (<EventDisplay eventType={"fixedEvent"}events={fixedEvents} removeEvent={removeFixedEvent}></EventDisplay>)}
   
@@ -172,7 +190,7 @@ export default function App() {
   
   </div>
   
-  <div className='middle-side'></div>
+  <div className='middle-side'></div> 
 
   <div className="right-side">
 
@@ -221,8 +239,12 @@ export default function App() {
           </div>
           <div className="day Tues">
             <div className="events">
-              <CalendarEvent startTime={"1:00"} endTime={"2:00"}></CalendarEvent>
-             
+    
+              {fixedEvents.map(event => {
+                // This should have a remove event button passed through that deals with all possible events
+                return (<CalendarEvent event={event}></CalendarEvent>)
+              })}
+              <div> {currentDate} </div>
               <div className="event start-2 end-5 securities">
                 <p className="title"></p>
                 <p className="time">2 PM - 5 PM</p>
@@ -232,25 +254,13 @@ export default function App() {
           
         </div>
         
-        
-
-
       </div>
-    
-
-  </div>
-
-  
-  
-
-  
-  
-
+    </div>
     
 </div>
   )
 }
-
+/* You can have a check for date setting? */
 /*<li className="event-item" key={event.id}>
             <h3>{event.title}</h3>
             <h3>{event.startTime} </h3>
