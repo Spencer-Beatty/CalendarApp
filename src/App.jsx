@@ -85,7 +85,7 @@ export default function App() {
     const data = async () => {
       try{
         //Processed Event Decription (ped)
-        const ped = await breakdownEventDescription(eventDescription);
+        const ped = await breakdownEventDescription(eventDescription, Date());
         
         //Add new event here
         addFixedEvents(ped.title, ped.startTime, ped.endTime, ped.date);

@@ -1,8 +1,8 @@
 
 
-export const breakdownEventDescription = async(event_description) => {
+export const breakdownEventDescription = async(event_description, current_date) => {
     
-    const data = fetch(`/members?name=${event_description}`).then(
+    const data = fetch(`/members?name=${event_description}&date=${current_date}`).then(
       
       res => res.json()
     ).then(

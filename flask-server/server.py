@@ -11,8 +11,11 @@ app = Flask(__name__)
 @app.route("/members")
 def members():
     eventDescription = request.args.get('name', default = "*", type = str)
+    currentDate = request.args.get('date', default = "*", type = str)
     eventPrototype = {"title": "", "startTime": "", "endTime": "", "date": "", "additionalPrompts": ""}
     
+    # Whenever key information is missing or unclear a prompt will be added to additional prompts
+    additionalPrompts = [] 
     #Step 1: split event description into different parts
     eventWordList = eventDescription.split(" ")
     
@@ -125,26 +128,90 @@ def members():
     endTime = times[1]
     date = " ".join(entityList[2])
 
+
+    #Check for potential missing information
+    if(times[2] == None and times[3] == None):
+        # No am or pm indicated:
+        additionalPrompts.append("Is that am or pm?") 
+        #Additional: "is that in the morning or afternoon"
+     
+    
+
     #Step 3: put these strings in 
     eventPrototype["title"] = title
     eventPrototype["startTime"] = startTime
     eventPrototype["endTime"] = endTime
     eventPrototype["date"] = date
+    eventPrototype["additionalPrompts"] = additionalPrompts
 
 
-
+   
     return eventPrototype
+    
     #return eventPrototype
 
 
 
+
+def getDate(lst):
+    """
+    input:
+    list of strings : lst
+    output:
+    YYYY-MM-DD date
+
+    common forms of Dates looks for:
+    None ->
+    Today ->
+    Tommorow ->
+    Saturday ->
+    Saturday March 5th
+    Saturday the 5th
+    the 5th
+    March 5th
+    """
+    s = " ".join(lst).lower()
+
+    month_day = ["", ""]
+    # month_day[0] = Month (ie 3)
+    # month_day[1] = Day (ie 05)
+
+    # Building string for patternMatching Weekday
+    # add optional . after abbreviations
+    monday = "monday|mon"
+    tuesday = "tuesday|tues|tue|tu"
+    wednesday = "wednesday|wed"
+    thursday = "thursday|thurs|thur|thu|th"
+    friday = "friday|fri"
+    saturday = "saturday|sat" 
+    sunday = "sunday|sun"
+    sat = "saturday"
+
+    weekdays = monday +"|"+ tuesday +"|"+ wednesday +"|"+ thursday +"|"+ friday +"|"+ saturday +"|"+ sunday
+   
+    #Building string patternMatching for Month
+    monthsLong = "january|february|march|april|may|june|july|august|september|october|november|december"
+    monthsAbv = "jan|feb|mar|apr|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec"
+
+    months = monthsLong +"|"+ monthsAbv
+
+    pattern = r"((?P<weekday>"+weekdays+r"))? ?(the|(?P<month>"+months+r"))? ?(?P<number>\d?\d(th)?(rst)?(nd)?)?" 
+
+    match = re.match(pattern, s)
+    if(match):
+        print(match.group(0))
+        print(match.group("weekday"))
+        print(match.group("month"))
+        print(match.group("number"))
+    
+    return(1)
 
 def getTimes(lst):
     """
     input:
     list of strings : lst
     output:
-    list size(2) with startTime [0], endTime [1]
+    list size(2) with startTime [0], endTime [1], meridien1 [2], meridien2 [3]
 
     common forms Times looks for:
     11 am to 12:30 -> 11 am , 12:30 pm
@@ -155,7 +222,7 @@ def getTimes(lst):
     """
 
     # Join list of strings into one string
-    s = ' '.join(lst)
+    s = ' '.join(lst).lower()
 
     # List to store results
     times = ["", "","",""]
@@ -200,7 +267,9 @@ def getTimes(lst):
                     times[3] = swapMeridien(times[2])
             else:
                 print("inference unacounted for " + times)
-                
+            
+
+
     return times
 
 def standardizeTime(time):
@@ -226,18 +295,30 @@ def swapMeridien(meridien):
     else:
         print("Error")
         return None
+
+# Set to True to test getDate
+if(True):
+    print(getDate(["Saturday"]))
+    print(getDate(["Saturday the 5th"]))
+    print(getDate(["Saturday march 5th"]))
+    print(getDate(["march 2nd"]))
+    print(getDate(["march"]))
+    print(getDate(["tuesday"]))
+
+#Set to True to test getTimes
+if(False):
 # Test cases
-print(getTimes(["11 am to 12:30"]))       # ['11 am', '12:30']
-print(getTimes(["4-5 pm"]))               # ['4', '5 pm']
-print(getTimes(["3 pm"]))                 # ['3 pm', '']
-print(getTimes(["10 am"]))                # ['10 am', '']
-print(getTimes(["10-11:30 am"]))          # ['10', '11:30 am']
-print(getTimes(["10:00-11:30 am"]))          # ['10', '11:30 am']
-print(getTimes(["1:00-11:30 am"]))          # ['1', '11:30 am']
-print(getTimes(["3:00pm"]))
-print(getTimes(["11:00-1:30 pm"]))  
-print(getTimes(["12:00-2:00 pm"]))  
-print(getTimes(["10:00 am pm"])) 
+    print(getTimes(["11 am to 12:30"]))       # ['11 am', '12:30']
+    print(getTimes(["4-5 Pm"]))               # ['4', '5 pm']
+    print(getTimes(["3 pm"]))                 # ['3 pm', '']
+    print(getTimes(["10 am"]))                # ['10 am', '']
+    print(getTimes(["10-11:30 am"]))          # ['10', '11:30 am']
+    print(getTimes(["10:00-11:30 am"]))          # ['10', '11:30 am']
+    print(getTimes(["1:00-11:30 am"]))          # ['1', '11:30 am']
+    print(getTimes(["3:00pm"]))
+    print(getTimes(["11:00-1:30 pm"]))  
+    print(getTimes(["12:00-2:00 pm"]))  
+    print(getTimes(["10:00 am pm"])) 
 
 
 if __name__ == "__main__":
