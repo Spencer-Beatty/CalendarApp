@@ -13,7 +13,7 @@ app = Flask(__name__)
 def members():
     eventDescription = request.args.get('name', default = "*", type = str)
     currentDate = request.args.get('date', default = "*", type = str)
-    eventPrototype = {"title": "", "startTime": "", "endTime": "", "dateMonth": "", "dateDay": "", "additionalPrompts": ""}
+    eventPrototype = {"title": "", "startTime": "","startTimeMeridien":"", "endTime": "","endTimeMeridien":"", "dateMonth": "", "dateDay": "", "additionalPrompts": []}
     
     # Whenever key information is missing or unclear a prompt will be added to additional prompts
     additionalPrompts = [] 
@@ -125,8 +125,13 @@ def members():
     title = " ".join(entityList[0])
     
     times = getTimes(entityList[1])
+    if(times[2] == "pm"):
+        times[0] = str(int(times[0].split(":")[0]) % 12 + 12 ) + ":" + times[0].split(":")[1]
+    if(times[3] == "pm"):
+        times[1] = str(int(times[1].split(":")[0]) % 12 + 12 ) + ":" +times[1].split(":")[1]
     startTime = times[0]
     endTime = times[1]
+    
     date = getDate(entityList[2], currentDate)
 
 
@@ -135,12 +140,13 @@ def members():
         # No am or pm indicated:
         additionalPrompts.append("Is that am or pm?") 
         #Additional: "is that in the morning or afternoon"
-     
+
     
 
     #Step 3: put these strings in 
     eventPrototype["title"] = title
     eventPrototype["startTime"] = startTime
+    
     eventPrototype["endTime"] = endTime
     eventPrototype["dateMonth"] = int(date[0]) - 1 # javascript datetime 0-11
     eventPrototype["dateDay"] = date[1]
@@ -339,8 +345,6 @@ def indexWeekday(weekday):
     "sunday": 7, "sun" : 7}
     
     return alias_dict[weekday]
-    
-
 
 def translateMonth(month):
     """
@@ -361,7 +365,6 @@ def translateMonth(month):
     print("error month " + month + " not found")
     return None
 
-
 def standardizeTime(time):
     if time == None or re.match(r"\d\d:\d\d|\d:\d\d",time):
         return time
@@ -369,8 +372,6 @@ def standardizeTime(time):
         return time+ ":00"
     else:
         return time
-
-
 
 def swapMeridien(meridien):
     """
@@ -386,6 +387,7 @@ def swapMeridien(meridien):
         print("Error")
         return None
 
+# ------TEST CASES-------
 # Set to True to test getDate
 cd = "Thu Aug 10 2023 15:06:25 GMT-0400 (Eastern Daylight Time)"
 if(True):

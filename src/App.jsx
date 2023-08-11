@@ -12,6 +12,7 @@ import {postFillerEventToFirestore} from './FirebaseConfig.js';
 import {postTaskToFirestore} from './FirebaseConfig.js';
 
 import {EventDisplay} from "./EventDisplay"
+import AdditionalInfoModal from './AdditionalInfoModal'
 
 import {CalendarEvent} from "./CalendarEvent"
 import "./calendar.css"
@@ -91,6 +92,8 @@ export default function App() {
     }
     return dates;
   };
+
+
   //Function takes event sentence as input and adds an event to fixedEvents
   function callBreakdown(eventDescription){
     console.log("breakdown called")
@@ -99,6 +102,15 @@ export default function App() {
         //Processed Event Decription (ped)
         const ped = await breakdownEventDescription(eventDescription, Date());
         
+        //Update times to be pm if given
+        if(ped.additionalPrompts !== []){
+          console.log(ped.additionalPrompts[0])
+          // Pop up model with additional information to fill in?
+          
+        }
+
+
+
         var a = new Date(2023, ped.dateMonth, ped.dateDay)
         console.log(a.toDateString())
         //Add new event here
@@ -215,7 +227,7 @@ export default function App() {
       <HeaderInfo callBreakdown={callBreakdown}></HeaderInfo>
 
       <div className='calendar'>
-        
+      <AdditionalInfoModal></AdditionalInfoModal>
 
       <div className='date-container'
         ref={dateRef}
@@ -241,9 +253,9 @@ export default function App() {
           {
           currentDates.map(date => {
             return <div className='events'> { fixedEvents.map(event => {
-              console.log(event.date)
+              
               if(event.date === parseInt(date.getDate())){
-                console.log("gotit")
+                
                 return <CalendarEvent event={event}></CalendarEvent>
               }
               return null;
