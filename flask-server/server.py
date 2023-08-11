@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 import re
-
+import math
+import calendar
 
 
 
@@ -12,7 +13,7 @@ app = Flask(__name__)
 def members():
     eventDescription = request.args.get('name', default = "*", type = str)
     currentDate = request.args.get('date', default = "*", type = str)
-    eventPrototype = {"title": "", "startTime": "", "endTime": "", "date": "", "additionalPrompts": ""}
+    eventPrototype = {"title": "", "startTime": "", "endTime": "", "dateMonth": "", "dateDay": "", "additionalPrompts": ""}
     
     # Whenever key information is missing or unclear a prompt will be added to additional prompts
     additionalPrompts = [] 
@@ -126,7 +127,7 @@ def members():
     times = getTimes(entityList[1])
     startTime = times[0]
     endTime = times[1]
-    date = " ".join(entityList[2])
+    date = getDate(" ".join(entityList[2]), currentDate)
 
 
     #Check for potential missing information
@@ -141,7 +142,8 @@ def members():
     eventPrototype["title"] = title
     eventPrototype["startTime"] = startTime
     eventPrototype["endTime"] = endTime
-    eventPrototype["date"] = date
+    eventPrototype["dateMonth"] = int(date[0]) - 1 # javascript datetime 0-11
+    eventPrototype["dateDay"] = date[1]
     eventPrototype["additionalPrompts"] = additionalPrompts
 
 
@@ -153,22 +155,22 @@ def members():
 
 
 
-def getDate(lst):
+def getDate(lst, currentDate):
     """
     input:
     list of strings : lst
     output:
-    YYYY-MM-DD date
+    MM, DD
 
     common forms of Dates looks for:
     None ->
     Today ->
     Tommorow ->
     Saturday ->
-    Saturday March 5th
-    Saturday the 5th
-    the 5th
-    March 5th
+    Saturday March 5th ->
+    Saturday the 5th ->
+    the 5th -> 
+    March 5th ->
     """
     s = " ".join(lst).lower()
 
@@ -185,7 +187,8 @@ def getDate(lst):
     friday = "friday|fri"
     saturday = "saturday|sat" 
     sunday = "sunday|sun"
-    sat = "saturday"
+    
+    
 
     weekdays = monday +"|"+ tuesday +"|"+ wednesday +"|"+ thursday +"|"+ friday +"|"+ saturday +"|"+ sunday
    
@@ -195,16 +198,31 @@ def getDate(lst):
 
     months = monthsLong +"|"+ monthsAbv
 
-    pattern = r"((?P<weekday>"+weekdays+r"))? ?(the|(?P<month>"+months+r"))? ?(?P<number>\d?\d(th)?(rst)?(nd)?)?" 
-
-    match = re.match(pattern, s)
-    if(match):
-        print(match.group(0))
-        print(match.group("weekday"))
-        print(match.group("month"))
-        print(match.group("number"))
+    pattern = r"((?P<weekday>"+weekdays+r"))? ?(the|(?P<month>"+months+r"))? ?((?P<number>(\d?\d))(th)?(rst)?(nd)?)?" 
     
-    return(1)
+    match = re.match(pattern, s)
+    currentDateMatch = re.match(r"(?P<weekday>\w+) (?P<month>\w+) (?P<number>\d|\d\d) (?P<year>\d\d\d\d) (?P<time>\d\d:\d\d:\d\d)", currentDate)
+    if(match):
+        
+        weekday = match.group("weekday")
+        month = match.group("month")
+        number = match.group("number")
+        
+        if(month != None):
+            month = translateMonth(month)
+            
+        else:
+            month = translateMonth(currentDateMatch.group("month"))
+        if(number == None and weekday == None):
+            # assume date is today
+            month_day[1] = int(currentDateMatch.group("number"))
+        elif(number != None and weekday == None):
+            month_day[1] = int(number)
+        elif(number == None and weekday != None):
+            month_day[1] = translateWeekday(weekday, currentDateMatch.group("weekday"), int(currentDateMatch.group("number")), calendar.monthrange(int(currentDateMatch.group("year")), int(month))[1])
+        month_day[0] = month
+        
+    return month_day
 
 def getTimes(lst):
     """
@@ -272,6 +290,75 @@ def getTimes(lst):
 
     return times
 
+def translateWeekday(weekday, cd, cn, daysInMonth):
+    """
+    input: str of weekday
+           str of current day
+           str of current number (for day)
+           int of days in month
+    ex: Sat Wed 12 31
+    
+    output: number of weekday input
+
+    ex: Sat Wed 12 31 -> 15
+    """
+    d1 = indexWeekday(weekday)
+    d2 = indexWeekday(cd)
+    #   4 6 -> 2
+    #   4 2 -> 5
+    #   29 
+    val = 0
+    if(d1 >= d2):
+        val = cn + d1 - d2
+    else:
+        val = cn + 7 - d2 + d1
+    if(val < daysInMonth):
+        return val
+    else:
+        return val - daysInMonth + 1
+    
+def indexWeekday(weekday):
+    """
+    input: str of weekday
+    
+    output: index of weekday
+    
+    ex: Monday -> 1
+        Sunday -> 7
+    """
+    weekday = weekday.lower()
+    alias_dict = {"monday" : 1 , "mon" : 1,
+    "tuesday" : 2 , "tues" : 2, "tue" : 2, "tu" : 2,
+    "wednesday" : 3, "wed": 3,
+    "thursday" : 4 , "thurs" : 4, "thur" : 4, "thu" : 4, "th": 4,
+    "friday": 5, "fri" : 5,
+    "saturday": 6, "sat" :6,
+    "sunday": 7, "sun" : 7}
+    
+    return alias_dict[weekday]
+    
+
+
+def translateMonth(month):
+    """
+    input: string of month
+
+    output: index of month
+
+    ex: March -> 4
+    """
+    month = month.lower()
+    months = ["january","february","march","april","may","june","july","august","september","october","november","december"]
+    counter = 1
+    for i in months:
+        if month in i:
+            return counter
+        counter+=1
+    
+    print("error month " + month + " not found")
+    return None
+
+
 def standardizeTime(time):
     if time == None or re.match(r"\d\d:\d\d|\d:\d\d",time):
         return time
@@ -297,13 +384,14 @@ def swapMeridien(meridien):
         return None
 
 # Set to True to test getDate
+cd = "Thu Aug 10 2023 15:06:25 GMT-0400 (Eastern Daylight Time)"
 if(True):
-    print(getDate(["Saturday"]))
-    print(getDate(["Saturday the 5th"]))
-    print(getDate(["Saturday march 5th"]))
-    print(getDate(["march 2nd"]))
-    print(getDate(["march"]))
-    print(getDate(["tuesday"]))
+    print(getDate(["Saturday"], cd)) # [8, 12]
+    print(getDate(["Saturday the 5th"], cd)) # problem 5 or sat?
+    print(getDate(["Saturday march 5th"], cd)) # problem 5 or sat
+    print(getDate(["march 2nd"], cd)) # [2, 3]
+    print(getDate(["march"], cd)) # [3]
+    print(getDate(["tuesday"], cd)) #
 
 #Set to True to test getTimes
 if(False):

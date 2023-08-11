@@ -87,8 +87,10 @@ export default function App() {
         //Processed Event Decription (ped)
         const ped = await breakdownEventDescription(eventDescription, Date());
         
+        var a = new Date(2023, ped.dateMonth, ped.dateDay)
+        console.log(a.toDateString())
         //Add new event here
-        addFixedEvents(ped.title, ped.startTime, ped.endTime, ped.date);
+        addFixedEvents(ped.title, ped.startTime, ped.endTime, ped.dateMonth);
       }catch(error){
         console.log("Error " , error)
       }
