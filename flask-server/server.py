@@ -127,7 +127,7 @@ def members():
     times = getTimes(entityList[1])
     startTime = times[0]
     endTime = times[1]
-    date = getDate(" ".join(entityList[2]), currentDate)
+    date = getDate(entityList[2], currentDate)
 
 
     #Check for potential missing information
@@ -172,7 +172,10 @@ def getDate(lst, currentDate):
     the 5th -> 
     March 5th ->
     """
+    
     s = " ".join(lst).lower()
+
+    
 
     month_day = ["", ""]
     # month_day[0] = Month (ie 3)

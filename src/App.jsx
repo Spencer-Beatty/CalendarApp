@@ -49,14 +49,17 @@ export default function App() {
   
 
   // state variables for date
-  const [currentDate, setCurrentDate] = useState(getDate());
-
+  
+  const [currentDates, setCurrentDates] = useState([])
   // Variables to align scroll-left styles
   const dateRef = useRef(null)
   const calendarRef = useRef(null)
-
+  
 
   useEffect(() => {
+    
+    setCurrentDates(getCurrentDates())
+
     const fetchEvents = async () => {
       try{
         // Loads events from Firestore
@@ -73,12 +76,21 @@ export default function App() {
       }
     };
     fetchEvents();
-
+    
+    
   }, []);
 
   //Date function
   
-
+  const getCurrentDates = () => {
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() + i);
+      dates.push(date);
+    }
+    return dates;
+  };
   //Function takes event sentence as input and adds an event to fixedEvents
   function callBreakdown(eventDescription){
     console.log("breakdown called")
@@ -90,7 +102,7 @@ export default function App() {
         var a = new Date(2023, ped.dateMonth, ped.dateDay)
         console.log(a.toDateString())
         //Add new event here
-        addFixedEvents(ped.title, ped.startTime, ped.endTime, ped.dateMonth);
+        addFixedEvents(ped.title, ped.startTime, ped.endTime, ped.dateDay);
       }catch(error){
         console.log("Error " , error)
       }
@@ -144,6 +156,11 @@ export default function App() {
     {id:crypto.randomUUID(), title:title, timeRequired:timeRequired, type:type, docRefNum:docRefNum }]})
   }
 
+  function intToDay(i) {
+    
+    const days = ['Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    return days[i];
+}
 
   
 
@@ -168,10 +185,7 @@ export default function App() {
  
 
 
-  console.log(calendarTimes)
-
-
-
+  console.log(currentDates.map(getDate))
 
   
   return (
@@ -209,22 +223,13 @@ export default function App() {
       <div className='date'>
       
       </div>
-      <div className="date">
-              <p className="date-num">9 </p>
-              <p className="date-day">Mon</p>
-            </div>
-      <div className="date">
-              <p className="date-num">10 </p>
-              <p className="date-day">Tues</p>
-      </div>
-      <div className="date">
-              <p className="date-num">11 </p>
-              <p className="date-day">Wed</p>
-      </div>
-      <div className="date">
-              <p className="date-num">12 </p>
-              <p className="date-day">Thur</p>
-      </div>
+      {currentDates.map(event => {
+        return(<div className="date">
+                  <p className="date-num">{intToDay(event.getDay())} </p>
+                  <p className="date-day">{event.getDate()}</p>
+              </div>)
+      })}
+      
       </div> 
 
 
@@ -232,29 +237,23 @@ export default function App() {
         ref={calendarRef}
         onScroll={handleScrollCalendar}>
           <TimeList></TimeList>
-          <div className='day Mon'>
-            <div className="events">
-              <div className="event start-2 end-5 securities">
-                <p className="title">Securities Regulation</p>
-                <p className="time" top={"40px"}>2 PM - 5 PM</p>
-              </div>
+          
+          {
+          currentDates.map(date => {
+            return <div className='events'> { fixedEvents.map(event => {
+              console.log(event.date)
+              if(event.date === parseInt(date.getDate())){
+                console.log("gotit")
+                return <CalendarEvent event={event}></CalendarEvent>
+              }
+              return null;
+
+              })}</div>;
               
-            </div>
-          </div>
-          <div className="day Tues">
-            <div className="events">
-    
-              {fixedEvents.map(event => {
-                // This should have a remove event button passed through that deals with all possible events
-                return (<CalendarEvent event={event}></CalendarEvent>)
-              })}
-              <div> {currentDate} </div>
-              <div className="event start-2 end-5 securities">
-                <p className="title"></p>
-                <p className="time">2 PM - 5 PM</p>
-              </div>
-            </div>
-          </div>
+            })
+          }
+
+              
           
         </div>
         
@@ -281,3 +280,28 @@ export default function App() {
         /*<CalendarEvents  events={fixedEvents}></CalendarEvents>*/
 
         /*<TimeList className="time-list-element"></TimeList>*/
+
+
+        /* <div className='day Mon'>
+            <div className="events">
+              <div className="event start-2 end-5 securities">
+                <p className="title">Securities Regulation</p>
+                <p className="time" top={"40px"}>2 PM - 5 PM</p>
+              </div>
+              
+            </div>
+          </div>
+          <div className="day Tues">
+            <div className="events">
+    
+              {fixedEvents.map(event => {
+                // This should have a remove event button passed through that deals with all possible events
+                return (<CalendarEvent event={event}></CalendarEvent>)
+              })}
+              <div> {currentDate} </div>
+              <div className="event start-2 end-5 securities">
+                <p className="title"></p>
+                <p className="time">2 PM - 5 PM</p>
+              </div>
+            </div>
+          </div>*/

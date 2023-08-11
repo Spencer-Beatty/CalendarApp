@@ -15,7 +15,7 @@
 
   .days {
     display: grid;
-    grid-template-columns: 50px repeat(4, 300px);
+    grid-template-columns: 50px repeat(7, 300px);
     overflow: auto;
     height: 500px;
     
@@ -37,7 +37,7 @@
     
     overflow-x: auto;
     display: grid;
-    grid-template-columns: 50px repeat(4, 300px);
+    grid-template-columns: 50px repeat(7, 300px);
     height: 50px;
     /* repeat(number of colunms, (minmax(minwidth, maxwidth));*/
 }
@@ -65,9 +65,9 @@
 
   .events {
     
-    display: flex;
+    position: relative;
    
-   
+    
     border-radius: 5px;
     
     
@@ -75,7 +75,7 @@
  }
 
   .event {
-   position: relative;
+   position: absolute;
    background-color: lightgreen;
    margin-bottom: 10px;
    width: 200px;
