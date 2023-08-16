@@ -138,10 +138,10 @@ def members():
     #Check for potential missing information
     if(title == ""):
         # No am or pm indicated:
-        additionalPrompts.append(["title","What is your event called?","str"]) 
+        additionalPrompts.append(["title","What is your event called?"]) 
         #Additional: "is that in the morning or afternoon"
-        
-
+    if(startTime == ""):
+        additionalPrompts.append(["startTime", "Please enter your start time in form (HH:MM) (am/pm)"])
     
 
     #Step 3: put these strings in 

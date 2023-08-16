@@ -56,12 +56,16 @@ export default function App() {
   // state variables for date
   
   const [currentDates, setCurrentDates] = useState([])
+  
   // Variables to align scroll-left styles
   const dateRef = useRef(null)
   const calendarRef = useRef(null)
 
   //Variable for Modal
   const [style, setStyle] = useState({display:'none'})
+  // Popup for error messages
+  const [popup, setPopup] = useState("")
+  const [errorStyle, setErrorStyle] = useState({display:'none'})
   
 
   useEffect(() => {
@@ -82,6 +86,11 @@ export default function App() {
         
         const eventsFromData = await LoadEventsFromFirestore();
         
+
+        
+        console.log(eventsFromData.fixedEvents)
+        
+
         setFixedEvents(eventsFromData.fixedEvents);
         setFillerEvents(eventsFromData.fillerEvents);
         setTasks(eventsFromData.tasks);
@@ -176,17 +185,56 @@ function closeModal(){
         }
 
 
+        
+        const startDate = new Date(2023, ped.dateMonth, ped.dateDay)
+        const [startHour, startMinute] = ped.startTime.split(":").map(Number)
+        startDate.setHours(startHour, startMinute, 0, 0)
+        const endDate = new Date(2023, ped.dateMonth, ped.dateDay)
+        if(ped.endTime === "" || ped.endTime === null){
+          endDate.setHours(startHour + 1, startMinute, 0, 0)
+        }else{
+          const [endHour, endMinute] = ped.endTime.split(":").map(Number)
+          endDate.setHours(endHour, endMinute, 0, 0)
+        }
+        
+        console.log(startDate)
+        console.log(endDate)
 
-        var a = new Date(2023, ped.dateMonth, ped.dateDay)
-        console.log(a.toDateString())
+        const eventOverlap = assessNewEventTime(startDate, endDate)
+        if(eventOverlap != null){
+          console.log("Couldn't add event due to event overlap")
+          console.log("title: " + eventOverlap.title + " time:  "+ eventOverlap.startTime)
+          setPopup("Couldn't add event due to event overlap\ntitle: " + eventOverlap.title + " time:  "+ eventOverlap.startTime + "-" + eventOverlap.endTime)
+          setErrorStyle({display:'block'})
+          // Pop Up Message
+          //Exit 
+        }else{
+          addFixedEvents(ped.title, startDate, endDate, ped.dateDay);
+        }
         //Add new event here
-        addFixedEvents(ped.title, ped.startTime, ped.endTime, ped.dateDay);
+        
       }catch(error){
         console.log("Error " , error)
       }
     }
     data();
   }
+  
+  function assessNewEventTime(startTime, endTime) {
+    for (let event of fixedEvents) {
+        // Check if events are on the same day
+        if (event.startTime.toDateString() === startTime.toDateString()) {
+            // Check if events overlap
+            if ((startTime < event.endTime && endTime > event.startTime) || 
+                (endTime > event.startTime && startTime < event.endTime)) {
+                return event;
+            }
+        }
+    }
+    return null;
+}
+
+
   
   //Function removes fixed Events from firebase as well as state variables
   function removeFixedEvent(id, docRefNum){
@@ -268,8 +316,26 @@ function closeModal(){
   
   return (
     <>
-    <div className="modal-element">
-    <div className="modal hidden" style={style}>
+    <div className="error-element" style={errorStyle}>
+      <div className='modal'>
+      <div className="flex">
+            
+            <button className="btn-close" onClick={e=>{setPopup("");setErrorStyle({display:'none'});}}>⨉</button>
+        </div>
+
+        <div>
+            <h3>Error</h3>
+            <p>
+            {popup}
+            </p>
+        </div>
+
+      </div>
+      <div className='overlay'></div>
+    </div>
+
+    <div className="modal-element" style={style}>
+    <div className="modal hidden" >
         <div className="flex">
             
             <button className="btn-close" onClick={e=>{setModalAnswer("");closeModal();}}>⨉</button>
@@ -288,7 +354,7 @@ function closeModal(){
 
 
     </div>
-    <div className="overlay hidden" style={style} ></div>
+    <div className="overlay hidden" ></div>
     </div> 
 
     <div className="container">
@@ -346,7 +412,7 @@ function closeModal(){
             return <div className='events'> { fixedEvents.map(event => {
               
               if(event.date === parseInt(date.getDate())){
-                
+                console.log(typeof(event.startTime))
                 return <CalendarEvent event={event}></CalendarEvent>
               }
               return null;

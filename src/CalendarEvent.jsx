@@ -5,14 +5,17 @@ export function CalendarEvent(props){
         const minuteHeight = hourHeight / 60;
 
 
-        const startTime = props.event.startTime.split(":");
-        const endTime = props.event.endTime.split(":");
+        const startHour = props.event.startTime.getHours();
+        const startMinute = props.event.startTime.getMinutes();
+        const endHour = props.event.endTime.getHours();
+        const endMinute = props.event.endTime.getMinutes();
 
-        const top = parseInt(startTime[0] * hourHeight + startTime[1] * minuteHeight);
+        const top = parseInt(startHour * hourHeight + startMinute * minuteHeight);
 
-        const bottom = parseInt(endTime[0] * hourHeight + endTime[1] * minuteHeight);
+        const bottom = parseInt(endHour * hourHeight + endMinute * minuteHeight);
 
-        
+        console.log(top)
+        console.log(bottom)
         const style = {
             
             top: `${top}px`,
@@ -23,7 +26,7 @@ export function CalendarEvent(props){
         <>
             <div className="event" style={style}>
                 <div className="title">{props.event.title}</div>
-                <div className="time">{startTime[0]} - {endTime[0]}</div>
+                <div className="time">{startHour} - {endHour}</div>
 
 
 

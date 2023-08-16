@@ -72,10 +72,21 @@ export function database() {
         const tasksQuerySnapshot = await getDocs(tasksCollection);
 
 
-        const fixedEvents = fixedQuerySnapshot.docs.map((doc) => ({
-        
-            id:crypto.randomUUID(), docRefNum: doc.id, ... doc.data()
-        }))
+        const fixedEvents = fixedQuerySnapshot.docs.map((doc) => {
+          const data = doc.data();
+      
+          // Convert Timestamp to JavaScript Date objects
+          const startTime = data.startTime ? data.startTime.toDate() : null;
+          const endTime = data.endTime ? data.endTime.toDate() : null;
+      
+          return {
+              id: crypto.randomUUID(),
+              docRefNum: doc.id,
+              ...data,
+              startTime,  // Override with the converted startTime
+              endTime     // Override with the converted endTime
+          };
+      });
 
         const fillerEvents = fillerQuerySnapshot.docs.map((doc) => ({
         
