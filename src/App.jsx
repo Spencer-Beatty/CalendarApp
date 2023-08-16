@@ -12,7 +12,7 @@ import {postFillerEventToFirestore} from './FirebaseConfig.js';
 import {postTaskToFirestore} from './FirebaseConfig.js';
 
 import {EventDisplay} from "./EventDisplay"
-import AdditionalInfoModal from './AdditionalInfoModal'
+
 
 import {CalendarEvent} from "./CalendarEvent"
 import "./calendar.css"
@@ -41,7 +41,11 @@ export default function App() {
   const [fillerEvents, setFillerEvents] = useState([])
   const [tasks, setTasks] = useState([])
   
-  const[calendarTimes, setCalendarTimes] = useState([])
+  const[modalAnswer, setModalAnswer] = useState([])
+  const[activePrompt, setActivePrompt] = useState("")
+  const[activeModal, setActiveModal] = useState(true)
+  const activeModalRef = useRef(activeModal)
+  const modalAnswerRef = useRef(modalAnswer)
 
   // state variables for boolean displays
   const [displayFixed, setDisplayFixed] = useState(false)
@@ -55,7 +59,18 @@ export default function App() {
   // Variables to align scroll-left styles
   const dateRef = useRef(null)
   const calendarRef = useRef(null)
+
+  //Variable for Modal
+  const [style, setStyle] = useState({display:'none'})
   
+
+  useEffect(() => {
+    activeModalRef.current = activeModal;
+  },[activeModal]);
+
+  useEffect(() => {
+    modalAnswerRef.current = modalAnswer;
+  },[modalAnswer]);
 
   useEffect(() => {
     
@@ -81,6 +96,19 @@ export default function App() {
     
   }, []);
 
+  function showModal(){
+   
+    setStyle({display:'block'})
+}
+
+
+function closeModal(){
+    console.log(activeModal)
+    setActiveModal(false)
+    setStyle({display:'none'})
+}
+
+
   //Date function
   
   const getCurrentDates = () => {
@@ -93,20 +121,58 @@ export default function App() {
     return dates;
   };
 
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+  //Function to ask prompts to the modal for additional information
+  const aprompt = async (prompt) => {
+    setActivePrompt(prompt);
+    showModal();
+    
+    console.log("currentref : " + activeModalRef.current)
+
+    
+    while (activeModalRef.current) {
+        console.log("here");
+        await sleep(1000);
+    }
+    
+  
+    
+    console.log("answer: " + modalAnswerRef.current);
+    if (modalAnswer === "") {
+        return -1;
+    }
+
+    
+    return modalAnswerRef.current;
+};
 
   //Function takes event sentence as input and adds an event to fixedEvents
-  function callBreakdown(eventDescription){
+  async function callBreakdown(eventDescription){
     console.log("breakdown called")
+    setActiveModal(true)
     const data = async () => {
       try{
         //Processed Event Decription (ped)
         const ped = await breakdownEventDescription(eventDescription, Date());
         
         //Update times to be pm if given
-        if(ped.additionalPrompts !== []){
-          console.log(ped.additionalPrompts[0])
-          // Pop up model with additional information to fill in?
+        if(ped.additionalPrompts.length > 0){
+          // Additional prompts will be of form [item, prompt]
           
+          for( let prompt of ped.additionalPrompts) {
+            console.log(prompt[1])
+            const answer = await aprompt(prompt[1])
+            if(answer === -1){
+              console.log("error")
+              //exit breakdown
+            }
+            ped[prompt[0]] = answer
+            console.log("line :" + answer)
+          }
+          // Pop up model with additional information to fill in?
         }
 
 
@@ -201,8 +267,33 @@ export default function App() {
 
   
   return (
+    <>
+    <div className="modal-element">
+    <div className="modal hidden" style={style}>
+        <div className="flex">
+            
+            <button className="btn-close" onClick={e=>{setModalAnswer("");closeModal();}}>⨉</button>
+        </div>
+
+        <div>
+            <h3>Stay in touch</h3>
+            <p>
+            {activePrompt}
+            </p>
+        </div>
+
+        <input value={modalAnswer} onChange={e => setModalAnswer(e.target.value)} 
+        type="email" id="email" placeholder="brendaneich@js.com" />
+        <button className="btn" onClick={e=>closeModal()}>Submit</button>
+
+
+    </div>
+    <div className="overlay hidden" style={style} ></div>
+    </div> 
+
     <div className="container">
-    
+
+     
   
   <div className='left-side'>
   <NewFixedEventForm addFixedEvents={addFixedEvents}></NewFixedEventForm>
@@ -227,7 +318,7 @@ export default function App() {
       <HeaderInfo callBreakdown={callBreakdown}></HeaderInfo>
 
       <div className='calendar'>
-      <AdditionalInfoModal></AdditionalInfoModal>
+      
 
       <div className='date-container'
         ref={dateRef}
@@ -273,7 +364,8 @@ export default function App() {
     </div>
     
 </div>
-  )
+</>)
+
 }
 /* You can have a check for date setting? */
 /*<li className="event-item" key={event.id}>

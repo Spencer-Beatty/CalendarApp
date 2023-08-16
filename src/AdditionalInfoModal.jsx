@@ -1,20 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./additionalInfoModal.css"
 
-
-export default function AdditionalInfoModal(){
-    const [style, setStyle] = useState()
+export default function AdditionalInfoModal(props){
     
-
-    function showModal(){
-        setStyle({display:'block'})
+    
+    
+  
+    useEffect(() => {
+        console.log(props.activeModal)
+        if(props.activeModal){
+            showModal();
+        }else{
+            closeModal();
+        }
         
-    }
+    },[props.activeModal])
 
-    function closeModal(){
-        setStyle({display:'none'})
-    }
-    
+
     return (<>
     <div className="modal hidden" style={style}>
         <div className="flex">
@@ -29,8 +31,9 @@ export default function AdditionalInfoModal(){
              </p>
         </div>
 
-        <input type="email" id="email" placeholder="brendaneich@js.com" />
-        <button className="btn" onClick={e=>closeModal()}>Submit</button>
+        <input value={inputValue} onChange={e => setInputValue(e.target.value)} 
+        type="email" id="email" placeholder="brendaneich@js.com" />
+        <button className="btn" onClick={e=>closeModal}>Submit</button>
 
 
     </div>

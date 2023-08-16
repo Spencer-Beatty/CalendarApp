@@ -136,10 +136,11 @@ def members():
 
 
     #Check for potential missing information
-    if(times[2] == None and times[3] == None):
+    if(title == ""):
         # No am or pm indicated:
-        additionalPrompts.append("Is that am or pm?") 
+        additionalPrompts.append(["title","What is your event called?","str"]) 
         #Additional: "is that in the morning or afternoon"
+        
 
     
 
