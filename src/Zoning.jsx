@@ -1,7 +1,14 @@
-export function Zoning(){
+import { useEffect, useRef, useState } from "react"
+import { ZoningBlock } from "./ZoningBlock"
+
+export function Zoning(props){
+    
+    
     const dayStart = 8 //Hours
     const dayEnd= 20
-    const height = 24
+    const [zoningBlockColours, setZoningBlockColours] = useState(Array.from({ length: (dayEnd-dayStart)*2 }))
+    const zoningRef = useRef(zoningBlockColours)
+    const height = 49
     const style = {
         height:`${height}px`
     }
@@ -9,10 +16,28 @@ export function Zoning(){
         top:`${dayStart*100}px`,
         position: `relative`
     }
+
+    useEffect(()=>{
+        props.updateZoningSchedule(zoningBlockColours)
+        console.log(zoningBlockColours)
+    },[zoningBlockColours])
+    
+    const handleColorChange = (newColor, index) => {
+        setZoningBlockColours(prevColors => {
+            return prevColors.map((color, idx) => (idx === index ? newColor : color));
+        });
+        console.log(`Color from child: ${newColor}`);
+        
+        
+    };
+
+    
+    
     return(
+        
         <div style={top} >
-        {Array.from({ length: (dayEnd-dayStart)*4 }).map((_, index) => (
-            <div key={index} className="zoning-block" style={style}></div>
+        {Array.from({ length: (dayEnd-dayStart)*2 }).map((_, index) => (
+            <ZoningBlock key={index} index={index} style={style} handleColorChange={handleColorChange}></ZoningBlock>
         ))}
         </div>
               

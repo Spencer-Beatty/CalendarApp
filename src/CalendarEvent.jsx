@@ -14,8 +14,7 @@ export function CalendarEvent(props){
 
         const bottom = parseInt(endHour * hourHeight + endMinute * minuteHeight);
 
-        console.log(top)
-        console.log(bottom)
+        
         const style = {
             
             top: `${top}px`,

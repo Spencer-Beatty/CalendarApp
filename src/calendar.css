@@ -15,7 +15,7 @@
 
   .days {
     display: grid;
-    grid-template-columns: 50px repeat(7, 300px);
+    grid-template-columns: 50px 50px repeat(7, 300px);
     overflow: auto;
     height: 500px;
     
@@ -106,8 +106,29 @@
   width: 100%;
   background-color: #f2f2f2; /* example color, you can customize this */
   border-bottom: 1px solid #e0e0e0;
-  padding-left: 10%;
+  
  }
+
+ .blue{
+  background-color: lightblue;
+ }
+ .grey{
+  background-color: lightslategray;
+ }
+ .green{
+  background-color: lightgreen;
+ }
+
+ .yellow{
+  background-color: rgb(235, 176, 66);
+ }
+
+ .brown{
+  background-color: rgb(192, 84, 84);
+ }
+
+
+
 
 
 

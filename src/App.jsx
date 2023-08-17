@@ -54,10 +54,10 @@ export default function App() {
   const [displayFiller, setDisplayFiller] = useState(false)
   const [displayTasks, setDisplayTasks] = useState(false)
 
-
   // state variables for date
 
   const [currentDates, setCurrentDates] = useState([])
+  const [zoningSchedule, setZoningSchedule] = useState([])
 
   // Variables to align scroll-left styles
   const dateRef = useRef(null)
@@ -72,6 +72,8 @@ export default function App() {
   const dayStart = 8 // 8 am
   const dayEnd = 20// 10 pm
 
+ 
+
   useEffect(() => {
     activeModalRef.current = activeModal;
   }, [activeModal]);
@@ -81,7 +83,8 @@ export default function App() {
   }, [modalAnswer]);
 
   useEffect(() => {
-
+    // this number should be the start of day
+    calendarRef.current.scrollTop = 800
     setCurrentDates(getCurrentDates())
 
     const fetchEvents = async () => {
@@ -92,7 +95,7 @@ export default function App() {
 
 
 
-        console.log(eventsFromData.fixedEvents)
+        
 
 
         setFixedEvents(eventsFromData.fixedEvents);
@@ -108,6 +111,11 @@ export default function App() {
 
 
   }, []);
+
+  function updateZoningSchedule(inputSchedule){
+    setZoningSchedule(inputSchedule)
+    
+  }
 
   function showModal() {
 
@@ -304,12 +312,14 @@ export default function App() {
 
 
   const handleScrollDate = () => {
+    
     if (calendarRef.current) {
       calendarRef.current.scrollLeft = dateRef.current.scrollLeft;
     }
   };
 
   const handleScrollCalendar = () => {
+    
     if (dateRef.current) {
       dateRef.current.scrollLeft = calendarRef.current.scrollLeft;
     }
@@ -319,7 +329,7 @@ export default function App() {
 
 
 
-  console.log(currentDates.map(getDate))
+console.log(1)
 
 
   return (
@@ -393,7 +403,7 @@ export default function App() {
 
           <div className='calendar'>
 
-
+            
             <div className='date-container'
               ref={dateRef}
               onScroll={handleScrollDate}>
@@ -413,6 +423,7 @@ export default function App() {
             <div className='days'
               ref={calendarRef}
               onScroll={handleScrollCalendar}>
+                <Zoning updateZoningSchedule={updateZoningSchedule}></Zoning>
               <TimeList></TimeList>
 
               {
@@ -421,12 +432,12 @@ export default function App() {
                     
                     <div className='events'> 
                     
-                    <Zoning></Zoning>
+                   
                     
                     {fixedEvents.map(event => {
 
                     if (event.date === parseInt(date.getDate())) {
-                      console.log(typeof (event.startTime))
+                      
                       return <CalendarEvent event={event}></CalendarEvent>
                     }
                     return null;
