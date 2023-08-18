@@ -6,9 +6,14 @@ export function ZoningBlock(props) {
     const className = "zoning-block " + color;
 
     useEffect(()=>{
+        setColor(props.initialColor)
         props.handleColorChange(color, props.index);
         
     },[])
+
+    useEffect(()=>{
+        setColor(props.initialColor)
+    },[props.initialColor])
     function changeColour() {
         const currentIndex = colors.indexOf(color);
         let newColor;

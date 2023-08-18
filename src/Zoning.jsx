@@ -21,6 +21,8 @@ export function Zoning(props){
         props.updateZoningSchedule(zoningBlockColours)
         console.log(zoningBlockColours)
     },[zoningBlockColours])
+
+    
     
     const handleColorChange = (newColor, index) => {
         setZoningBlockColours(prevColors => {
@@ -37,7 +39,7 @@ export function Zoning(props){
         
         <div style={top} >
         {Array.from({ length: (dayEnd-dayStart)*2 }).map((_, index) => (
-            <ZoningBlock key={index} index={index} style={style} handleColorChange={handleColorChange}></ZoningBlock>
+            <ZoningBlock initialColor={props.initialZoningSchedule[index]} key={index} index={index} style={style} handleColorChange={handleColorChange}></ZoningBlock>
         ))}
         </div>
               

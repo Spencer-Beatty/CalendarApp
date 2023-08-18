@@ -7,7 +7,7 @@ import { Event } from "./Event"
 import { HeaderInfo } from './HeaderInfo'
 import { TimeList } from './TimeList'
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import firebaseApp, { postEventToFirestore, deleteEventFromFirestore, LoadEventsFromFirestore } from './FirebaseConfig.js';
+import firebaseApp, { postEventToFirestore, deleteEventFromFirestore, LoadEventsFromFirestore, postZoningScheduleToFirestore,LoadZoningScheduleFromFirestore } from './FirebaseConfig.js';
 import { postFillerEventToFirestore } from './FirebaseConfig.js';
 import { postTaskToFirestore } from './FirebaseConfig.js';
 import { Zoning } from './Zoning'
@@ -58,6 +58,8 @@ export default function App() {
 
   const [currentDates, setCurrentDates] = useState([])
   const [zoningSchedule, setZoningSchedule] = useState([])
+  const [initialZoningSchedule, setInitialZoningSchedule] = useState(null)
+  
 
   // Variables to align scroll-left styles
   const dateRef = useRef(null)
@@ -82,6 +84,7 @@ export default function App() {
     modalAnswerRef.current = modalAnswer;
   }, [modalAnswer]);
 
+  
   useEffect(() => {
     // this number should be the start of day
     calendarRef.current.scrollTop = 800
@@ -90,14 +93,16 @@ export default function App() {
     const fetchEvents = async () => {
       try {
         // Loads events from Firestore
-
+        
         const eventsFromData = await LoadEventsFromFirestore();
+        const zoningScheduleFromData = await LoadZoningScheduleFromFirestore();
 
-
+        console.log(zoningScheduleFromData)
+        console.log(zoningScheduleFromData[0].schedule)
 
         
-
-
+        setInitialZoningSchedule(zoningScheduleFromData[0].schedule)
+        setZoningSchedule(zoningScheduleFromData[0].schedule)
         setFixedEvents(eventsFromData.fixedEvents);
         setFillerEvents(eventsFromData.fillerEvents);
         setTasks(eventsFromData.tasks);
@@ -112,10 +117,18 @@ export default function App() {
 
   }, []);
 
+  useEffect(()=>{
+    console.log("ZoningSchedule is changed")
+    postZoningScheduleToFirestore(zoningSchedule)
+  },[zoningSchedule])
+
   function updateZoningSchedule(inputSchedule){
     setZoningSchedule(inputSchedule)
     
+    
   }
+
+  
 
   function showModal() {
 
@@ -328,7 +341,8 @@ export default function App() {
 
 
 
-
+console.log(zoningSchedule)
+console.log("initial zoning scheduel:" + initialZoningSchedule)
 console.log(1)
 
 
@@ -423,7 +437,12 @@ console.log(1)
             <div className='days'
               ref={calendarRef}
               onScroll={handleScrollCalendar}>
-                <Zoning updateZoningSchedule={updateZoningSchedule}></Zoning>
+                {initialZoningSchedule ? (
+      <Zoning initialZoningSchedule={initialZoningSchedule}  updateZoningSchedule={updateZoningSchedule}/>
+    ) : (
+      <p>Loading zoning schedule...</p>
+    )}
+                
               <TimeList></TimeList>
 
               {

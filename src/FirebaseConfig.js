@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -63,6 +63,7 @@ export function database() {
     const fixedEventsCollection = collection(db, 'fixedEvents');
     const fillerEventsCollection = collection(db, 'fillerEvents');
     const tasksCollection = collection(db, 'tasks');
+    
 
     
 
@@ -115,6 +116,15 @@ export function database() {
     
   };
 
+  export const LoadZoningScheduleFromFirestore = async () => {
+    const db = getFirestore();  
+    const zoningQuerySnapshot = await getDocs(collection(db, "Settings"))
+    const zoningSchedule = zoningQuerySnapshot.docs.map((doc) => ({
+      id:crypto.randomUUID(), docRefNum: doc.id, ... doc.data()
+    }))
+    return zoningSchedule
+
+  };
  
 
   export const deleteEventFromFirestore= async (docRefNum, eventType) => {
@@ -133,6 +143,26 @@ export function database() {
     }
   };
 
+  export const postZoningScheduleToFirestore = async(zoningSchedule) => {
+    const db = getFirestore();
+    
+    const newZoningSchedule = {
+      schedule: zoningSchedule
+    }
+    if(zoningSchedule===undefined){
+      throw new Error("Zoning Schedule is undefined")
+      
+    }
+    // Specify the collection where you want to store events
+    const zoningCollection = collection(db, 'Settings');
+    try{
+      const docRef = await setDoc(doc(db, "Settings", "ZoningSchedule"), newZoningSchedule)
+      return docRef
+    }catch(error){
+      throw error
+    }
+    
+  };
 
   export const postFillerEventToFirestore = async (title, duration, type) => {
     const db = getFirestore();
