@@ -95,14 +95,8 @@ export default function App() {
         // Loads events from Firestore
         
         const eventsFromData = await LoadEventsFromFirestore();
-        const zoningScheduleFromData = await LoadZoningScheduleFromFirestore();
-
-        console.log(zoningScheduleFromData)
-        console.log(zoningScheduleFromData[0].schedule)
-
         
-        setInitialZoningSchedule(zoningScheduleFromData[0].schedule)
-        setZoningSchedule(zoningScheduleFromData[0].schedule)
+        
         setFixedEvents(eventsFromData.fixedEvents);
         setFillerEvents(eventsFromData.fillerEvents);
         setTasks(eventsFromData.tasks);
@@ -117,16 +111,48 @@ export default function App() {
 
   }, []);
 
+
   useEffect(()=>{
-    console.log("ZoningSchedule is changed")
-    postZoningScheduleToFirestore(zoningSchedule)
+    
+    if(zoningSchedule.length > 0){
+      console.log("ZoningSchedule is changed")
+      console.log(zoningSchedule)
+      postZoningScheduleToFirestore(zoningSchedule)
+    }
+    
+  
+
   },[zoningSchedule])
 
   function updateZoningSchedule(inputSchedule){
+    
     setZoningSchedule(inputSchedule)
     
-    
   }
+
+  async function fetchZoningScheduleFromFirestore() {
+    try {
+        const zoningScheduleFromData = await LoadZoningScheduleFromFirestore();
+        console.log(zoningScheduleFromData)
+        if (zoningScheduleFromData.length > 0) {
+            return zoningScheduleFromData[0].schedule;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+
+
+async function checkFirestoreForZoningSchedule() {
+    const zoningSchedule = await fetchZoningScheduleFromFirestore();
+    
+    return zoningSchedule;
+}
+
 
   
 
@@ -341,9 +367,7 @@ export default function App() {
 
 
 
-console.log(zoningSchedule)
-console.log("initial zoning scheduel:" + initialZoningSchedule)
-console.log(1)
+
 
 
   return (
@@ -437,11 +461,13 @@ console.log(1)
             <div className='days'
               ref={calendarRef}
               onScroll={handleScrollCalendar}>
-                {initialZoningSchedule ? (
-      <Zoning initialZoningSchedule={initialZoningSchedule}  updateZoningSchedule={updateZoningSchedule}/>
-    ) : (
-      <p>Loading zoning schedule...</p>
-    )}
+                
+      <Zoning 
+      initialZoningSchedule={initialZoningSchedule}
+        updateZoningSchedule={updateZoningSchedule}
+        checkFirestoreForZoningSchedule={checkFirestoreForZoningSchedule}
+        />
+    
                 
               <TimeList></TimeList>
 

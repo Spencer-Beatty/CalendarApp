@@ -118,11 +118,18 @@ export function database() {
 
   export const LoadZoningScheduleFromFirestore = async () => {
     const db = getFirestore();  
-    const zoningQuerySnapshot = await getDocs(collection(db, "Settings"))
+    try{
+      const zoningQuerySnapshot = await getDocs(collection(db, "Settings"))
     const zoningSchedule = zoningQuerySnapshot.docs.map((doc) => ({
       id:crypto.randomUUID(), docRefNum: doc.id, ... doc.data()
     }))
+    console.log(zoningSchedule)
     return zoningSchedule
+    }catch(error){
+
+    }
+    
+    
 
   };
  
