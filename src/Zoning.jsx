@@ -30,7 +30,7 @@ export function Zoning(props){
         const fetchData = async () => {
             try {
                 const dataFromFireStore = await props.checkFirestoreForZoningSchedule();
-                console.log(dataFromFireStore);
+                
     
                 if (dataFromFireStore === null) {
                     const defaultColors = Array.from({ length: (dayEnd - dayStart) * 2 });
@@ -38,7 +38,7 @@ export function Zoning(props){
                     setInitialColors(defaultColors.map((zone) => {
                         return "unassigned"
                     }));
-                    console.log(initialColors)
+                    
                 
                 } else {
                     setZoningBlockColours(dataFromFireStore);
@@ -56,7 +56,7 @@ export function Zoning(props){
     useEffect(()=>{
         
         if(zoningBlockColours.length > 0){
-            console.log(zoningBlockColours.length)
+            
             props.updateZoningSchedule(zoningBlockColours)
         }
         
@@ -74,7 +74,7 @@ export function Zoning(props){
           newColors[index] = newColor; // Update the color at the specified index
           return newColors;
         });
-        console.log(`Color from child: ${newColor}`);
+        
       };
 
     

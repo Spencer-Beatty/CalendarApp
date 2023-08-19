@@ -11,7 +11,7 @@ export function ZoningBlock(props) {
     useEffect(()=>{
         setColor(props.initialColor)
         props.handleColorChange(props.initialColor, props.index)
-        console.log(props.initialColor)
+        
     },[props.initialColor])
     
     useEffect(() => {

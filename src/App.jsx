@@ -17,7 +17,7 @@ import { EventDisplay } from "./EventDisplay"
 
 import { CalendarEvent } from "./CalendarEvent"
 import "./calendar.css"
-import { breakdownEventDescription } from './PythonCommunicaton'
+import { breakdownEventDescription,  fillSchedule  } from './PythonCommunicaton'
 
 
 
@@ -42,6 +42,7 @@ export default function App() {
   const [fixedEvents, setFixedEvents] = useState([])
   const [fillerEvents, setFillerEvents] = useState([])
   const [tasks, setTasks] = useState([])
+  const [calendarEvents, setCalendarEvents] = useState([])
 
   const [modalAnswer, setModalAnswer] = useState([])
   const [activePrompt, setActivePrompt] = useState("")
@@ -208,6 +209,25 @@ async function checkFirestoreForZoningSchedule() {
 
     return modalAnswerRef.current;
   };
+
+  useEffect(()=>{
+    callFillSchedule();
+  },[])
+
+  async function callFillSchedule(){
+    console.log("fill schedule called")
+
+    const data = async () => {
+      try{
+        const schedule = await fillSchedule(fillerEvents, fixedEvents, zoningSchedule)
+        console.log(schedule)
+        return schedule
+      }catch(error){
+        throw error
+      }
+    }
+    data();
+  }
 
   //Function takes event sentence as input and adds an event to fixedEvents
   async function callBreakdown(eventDescription) {

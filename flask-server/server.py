@@ -161,6 +161,51 @@ def members():
     #return eventPrototype
 
 
+@app.route("/fillSchedule", methods=['POST'])
+def fillSchedule():
+    data = request.get_json()
+
+    fillerEvents = data.get('fillerEvents', [])
+    fixedEvents = data.get('fixedEvents', [])
+    zoningSchedule = data.get('zoningBlocks', [])
+
+    zoneLength = 30
+    zoneHeight = 50
+
+    print(fixedEvents)
+   
+    ap = {
+        "fixedEvents": fixedEvents,
+        "fillerEvents": fillerEvents,
+        "zoningSchedule": zoningSchedule
+    }
+
+    return jsonify(ap)
+
+
+"""
+@app.route("/fillSchedule")
+def fillSchedule():
+    print("received")
+    # eventDescription = request.args.get('name', default="*", type=str)
+    fillerEvents = request.args.get('fillerEvents', default='*', type=list)
+    fixedEvents = request.args.get('fixedEvents', default='*', type=list)
+    zoningSchedule = request.args.get('zoningSchedule', default='*', type=list)
+    
+    zoneLength = 30
+    zoneHeight = 50
+    
+    print(fixedEvents)
+   
+    
+    ap = {"fixedEvents": fixedEvents,
+          "fillerEvents":fillerEvents,
+          "zoningSchedule":zoningSchedule}
+
+
+    return ap
+"""
+
 
 
 def getDate(lst, currentDate):
