@@ -109,26 +109,33 @@
   
  }
 
- .blue{
+ .work{
   background-color: lightblue;
  }
- .grey{
+ .unassigned{
   background-color: lightslategray;
  }
- .green{
+ .active{
   background-color: lightgreen;
  }
 
- .yellow{
+ .passion{
   background-color: rgb(235, 176, 66);
  }
 
- .brown{
+ .social{
   background-color: rgb(192, 84, 84);
  }
 
 
 
+ .legend{
+  background-color: gray;
+ }
+
+ .legend-element{
+  color:red;
+ }
 
 
 

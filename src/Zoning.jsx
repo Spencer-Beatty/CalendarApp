@@ -36,7 +36,7 @@ export function Zoning(props){
                     const defaultColors = Array.from({ length: (dayEnd - dayStart) * 2 });
                     setZoningBlockColours(defaultColors);
                     setInitialColors(defaultColors.map((zone) => {
-                        return "grey"
+                        return "unassigned"
                     }));
                     console.log(initialColors)
                 

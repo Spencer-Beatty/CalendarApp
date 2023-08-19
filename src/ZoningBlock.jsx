@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 export function ZoningBlock(props) {
-    const [color, setColor] = useState("grey");
-    const colors = ["grey", "blue", "green", "yellow", "brown"];
+    const [color, setColor] = useState("unassigned");
+    const colors = ["unassigned", "work", "active", "passion", "social"];
     const className = "zoning-block " + color;
 
     
@@ -21,8 +21,8 @@ export function ZoningBlock(props) {
     }, [props.resetRequested]);
 
     function resetColor() {
-        setColor("grey"); // Reset the color to grey
-        props.handleColorChange("grey", props.index)
+        setColor("unassigned"); // Reset the color to grey
+        props.handleColorChange("unassigned", props.index)
     }
 
     function changeColour() {

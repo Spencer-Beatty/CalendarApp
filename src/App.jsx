@@ -436,7 +436,7 @@ async function checkFirestoreForZoningSchedule() {
         <div className='middle-side'></div>
 
         <div className="right-side">
-
+          
           <HeaderInfo callBreakdown={callBreakdown}></HeaderInfo>
 
           <div className='calendar'>
