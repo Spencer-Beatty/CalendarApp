@@ -3,6 +3,7 @@ import schedule
 import re
 import math
 import calendar
+import schedule
 
 
 
@@ -164,11 +165,13 @@ def members():
 @app.route("/fillSchedule", methods=['POST'])
 def fillSchedule():
     data = request.get_json()
-
+    dayStart = 800 # 800 px
+    dayEnd = 2000
     fillerEvents = data.get('fillerEvents', [])
     fixedEvents = data.get('fixedEvents', [])
     zoningSchedule = data.get('zoningBlocks', [])
 
+    schedule.createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, zoningSchedule)
     zoneLength = 30
     zoneHeight = 50
 
