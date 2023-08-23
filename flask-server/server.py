@@ -171,16 +171,13 @@ def fillSchedule():
     fixedEvents = data.get('fixedEvents', [])
     zoningSchedule = data.get('zoningBlocks', [])
 
-    schedule.createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, zoningSchedule)
-    zoneLength = 30
-    zoneHeight = 50
+    generatedEvents = schedule.createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, zoningSchedule)
+    
 
-    print(fixedEvents)
-   
+    
+    #After Proccessing
     ap = {
-        "fixedEvents": fixedEvents,
-        "fillerEvents": fillerEvents,
-        "zoningSchedule": zoningSchedule
+        "generatedEvents": generatedEvents,
     }
 
     return jsonify(ap)

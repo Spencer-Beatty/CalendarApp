@@ -21,7 +21,7 @@ export function NewFillerEventForm(props){
     
     <label htmlFor='type'>Type</label>
     <select value={type} onChange={e => setType(e.target.value)}>
-        <option>Excercise</option>
+        <option>unassigned</option>
         <option>Work</option>
         <option>Relax</option>
         <option>Creative</option>

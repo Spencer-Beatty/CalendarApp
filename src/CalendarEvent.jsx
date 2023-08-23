@@ -5,10 +5,10 @@ export function CalendarEvent(props){
         const minuteHeight = hourHeight / 60;
 
 
-        const startHour = props.event.startTime.getHours();
-        const startMinute = props.event.startTime.getMinutes();
-        const endHour = props.event.endTime.getHours();
-        const endMinute = props.event.endTime.getMinutes();
+        const startHour = new Date(props.event.startTime).getHours();
+        const startMinute = new Date(props.event.startTime).getMinutes();
+        const endHour = new Date(props.event.endTime).getHours();
+        const endMinute = new Date(props.event.endTime).getMinutes();
 
         const top = parseInt(startHour * hourHeight + startMinute * minuteHeight);
 

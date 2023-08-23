@@ -97,7 +97,7 @@ export default function App() {
         
         const eventsFromData = await LoadEventsFromFirestore();
         
-        
+        setCalendarEvents(eventsFromData.fixedEvents);
         setFixedEvents(eventsFromData.fixedEvents);
         setFillerEvents(eventsFromData.fillerEvents);
         setTasks(eventsFromData.tasks);
@@ -210,9 +210,9 @@ async function checkFirestoreForZoningSchedule() {
     return modalAnswerRef.current;
   };
 
-  useEffect(()=>{
+  function handleFill(){
     callFillSchedule();
-  },[])
+  }
 
   async function callFillSchedule(){
     console.log("fill schedule called")
@@ -220,6 +220,16 @@ async function checkFirestoreForZoningSchedule() {
     const data = async () => {
       try{
         const schedule = await fillSchedule(fillerEvents, fixedEvents, zoningSchedule)
+        setCalendarEvents(currentEvents => {
+          const updatedGeneratedEvents = schedule.generatedEvents.map(event => ({
+            ...event,
+            startTime: event.startTime + "-0400",
+            endTime: event.endTime + "-0400"
+          }));
+          
+          return [...currentEvents, ...updatedGeneratedEvents];
+        });
+      
         console.log(schedule)
         return schedule
       }catch(error){
@@ -388,10 +398,11 @@ async function checkFirestoreForZoningSchedule() {
 
 
 
-
+console.log(calendarEvents)
 
   return (
     <>
+    <button onClick={handleFill}>HandleFill</button>
       <div className="error-element" style={errorStyle}>
         <div className='modal'>
           <div className="flex">
@@ -499,11 +510,11 @@ async function checkFirestoreForZoningSchedule() {
                     
                    
                     
-                    {fixedEvents.map(event => {
-
-                    if (event.date === parseInt(date.getDate())) {
-                      
-                      return <CalendarEvent event={event}></CalendarEvent>
+                    {calendarEvents.map(event => {
+                    
+                    const dateEvent = new Date(event.startTime + "-0400")
+                    if ( dateEvent.getDate() === parseInt(date.getDate())) {
+                      return <CalendarEvent event={event}>Helo</CalendarEvent>
                     }
                     return null;
 

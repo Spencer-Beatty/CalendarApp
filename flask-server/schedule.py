@@ -2,6 +2,8 @@ import re
 import calendar
 from datetime import datetime, timedelta
 import math
+import random
+import pytz
 
 
 def createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, zoningSchedule):
@@ -45,11 +47,19 @@ def createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, zoningSchedule):
 
     freeSpace = getFreeSpaceByDate(listOfTimeRanges)
     
-    for start, end in freeSpace:
-        print(start,end)
+    freeSpaceList = []
+    print("FreeSpaces\n")
+    for timeRange in freeSpace:
+        for start, end in timeRange:
+            print(start, end)
+            freeSpaceList.extend(fillRange(start, end, fillerEvents, zoningSchedule))
+    
+    
+    return freeSpaceList
 
+    
 
-    listOfFillerEventsToBeAdded = []
+    
     #Go through free space picking filler events to add based on zoning
     #Find size of zoning by running forward until either hitting a difffernt type of
     #Zoning or reaching the end of the freeSpace
@@ -65,19 +75,93 @@ def createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, zoningSchedule):
 
 
 def fillRange(start, end, fillerEvents, zoningSchedule):
+    """
+    input:
+        start (datetime) \n
+        end (datetime) \n
+        fillerEvents (list) type (str): {title(str), duration(int "minutes" ), priority (int)} \n
+        zoningSchedule (list) [str]
+
+    output:
+        events (list) {title, startTime, endTime}
+
+    """
+    events = []
     current1 = start
-    current2 = start + timedelta(minutes=30)
-    currentZone = getZoneByTime(current2, zoningSchedule, 30)
+    current2 = start #Inititalize variable
+    #Set current2 to be equal to the start of the next zone that way we can iterate through
+    #Zones by simply adding the zoning minutes
+    if(start.minute < 30):
+        current2 = start.replace(minute=30)
+    else:
+        current2 = start.replace(minute=0) + timedelta(hours=1)
+    currentZone = getZoneByTime(current1, zoningSchedule, 30)
+    print("Starting While loop")
     while(current2 < end):
+        
         if(getZoneByTime(current2, zoningSchedule, 30) == currentZone):
             #Zone is the same as the previous block, keep going
+            current2 += timedelta(minutes=30)
             continue
         else:
-            print(1)
-            #Zone is not the same so we can fill in the current zone which is at least 30 mins
+            #Zone is not the same so we can fill in the space 
+            #from current1 to current2 then set current1 to current2 and extend current2
+            options = [element for element in fillerEvents if element.type == currentZone]
+            size = current2 - current1
+            while(size > timedelta(hours=0)):
+                option = pickOption(size, options)
+                if(option == None):
+                    size = timedelta(hours=0)
+                    continue
+                eventLength = timedelta(minutes=int(option["duration"]))
+                size = size - eventLength
+                events.append({"title": option["title"],"startTime":current1, "endTime":current1+eventLength})
+                current1 += eventLength
+            current1 = current2
+            currentZone = getZoneByTime(current1, zoningSchedule, 30)
+            current2 += timedelta(minutes=30)
+            
+    #Deal with current1 to end
+    print(fillerEvents)
+    options = [element for element in fillerEvents if element["type"] == currentZone]
+    size = end - current1
+    while(size > timedelta(hours=0)):
+                option = pickOption(size, options)
+                if(option == None):
+                    size = timedelta(hours=0)
+                    continue
+                eventLength = timedelta(minutes=int(option["duration"]))
+                size = size - eventLength
+                events.append({"title": option["title"],"startTime":current1, "endTime":current1+eventLength})
+                current1 += eventLength
+    print("Events")
+    return events
 
-        
-        #
+                
+            
+
+
+
+def pickOption(size, options):
+    """
+    size: timedelta object
+
+    options: list filler items for that zone,
+             traits ( title, duration, type, priority)
+
+    output:
+        chosen: ( title, duration, type, priority)
+    """
+    potentials = []
+    for i in options:
+        if(int(i["duration"]) < size.seconds / 60):
+            potentials.append(i)
+
+    #For now just returns a random size
+    if(len(potentials) == 0):
+        return None
+    else:
+        return potentials[random.randrange(0,len(potentials))]
 
 
 def getZoneByTime(time, zoningSchedule, zoningMinutes):
