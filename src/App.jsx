@@ -227,7 +227,7 @@ async function checkFirestoreForZoningSchedule() {
             endTime: event.endTime + "-0400"
           }));
           
-          return [...currentEvents, ...updatedGeneratedEvents];
+          return [...fillerEvents, ...updatedGeneratedEvents];
         });
       
         console.log(schedule)

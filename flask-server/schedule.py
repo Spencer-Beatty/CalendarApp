@@ -106,7 +106,7 @@ def fillRange(start, end, fillerEvents, zoningSchedule):
         else:
             #Zone is not the same so we can fill in the space 
             #from current1 to current2 then set current1 to current2 and extend current2
-            options = [element for element in fillerEvents if element.type == currentZone]
+            options = [element for element in fillerEvents if element["type"] == currentZone]
             size = current2 - current1
             while(size > timedelta(hours=0)):
                 option = pickOption(size, options)
@@ -115,7 +115,7 @@ def fillRange(start, end, fillerEvents, zoningSchedule):
                     continue
                 eventLength = timedelta(minutes=int(option["duration"]))
                 size = size - eventLength
-                events.append({"title": option["title"],"startTime":current1, "endTime":current1+eventLength})
+                events.append({"title": option["title"],"startTime":current1, "endTime":current1+eventLength, "type":currentZone})
                 current1 += eventLength
             current1 = current2
             currentZone = getZoneByTime(current1, zoningSchedule, 30)
@@ -124,6 +124,7 @@ def fillRange(start, end, fillerEvents, zoningSchedule):
     #Deal with current1 to end
     print(fillerEvents)
     options = [element for element in fillerEvents if element["type"] == currentZone]
+    print(options)
     size = end - current1
     while(size > timedelta(hours=0)):
                 option = pickOption(size, options)
@@ -132,7 +133,7 @@ def fillRange(start, end, fillerEvents, zoningSchedule):
                     continue
                 eventLength = timedelta(minutes=int(option["duration"]))
                 size = size - eventLength
-                events.append({"title": option["title"],"startTime":current1, "endTime":current1+eventLength})
+                events.append({"title": option["title"],"startTime":current1, "endTime":current1+eventLength, "type":currentZone})
                 current1 += eventLength
     print("Events")
     return events
@@ -154,7 +155,7 @@ def pickOption(size, options):
     """
     potentials = []
     for i in options:
-        if(int(i["duration"]) < size.seconds / 60):
+        if(int(i["duration"]) <= size.seconds / 60):
             potentials.append(i)
 
     #For now just returns a random size
@@ -166,7 +167,8 @@ def pickOption(size, options):
 
 def getZoneByTime(time, zoningSchedule, zoningMinutes):
     #Here we assume zoning schedule starts at 8 am
-    index = math.floor(time.hour - 8 * (60/zoningMinutes) + time.minute/zoningMinutes)
+    index = math.floor((time.hour - 8) * (60/zoningMinutes) + time.minute/zoningMinutes)
+    print(index)
     return zoningSchedule[ index ]
 
 
@@ -182,18 +184,18 @@ def getFreeSpaceByDate(listOfTimeRanges):
         freeTimeRangesForDay = []
         timeRangesForDay = timeRangeDict[dayNumber]
         dayStart = 8
+        currentDate = datetime.now()
         if(len(timeRangesForDay) <= 0):
             # .weekday() range 0-6
-            currentDate = datetime.now()
+
            
             dates = [currentDate.replace(hour=8, minute=0, second=0, microsecond=0) + timedelta(days=((emptyDate(currentDate.isoweekday(), dayNumber)))) ,
               currentDate.replace(hour=20, minute=0, second=0, microsecond=0) + timedelta(hours=0, days=((emptyDate(currentDate.isoweekday(), dayNumber))))]
-            
             days.append( [dates] )
             continue
-        cs, ce = timeRangesForDay[0]
-        currentTime = datetime(cs.year, cs.month, cs.day, 8)
-        dayEnd = datetime(cs.year,cs.month, cs.day, 20)
+        
+        currentTime = currentDate.replace(hour=8, minute=0, second=0, microsecond=0) + timedelta(days=((emptyDate(currentDate.isoweekday(), dayNumber))))
+        dayEnd = currentDate.replace(hour=20, minute=0, second=0, microsecond=0) + timedelta(hours=0, days=((emptyDate(currentDate.isoweekday(), dayNumber))))
         counter = 0
         while(currentTime < dayEnd and counter < len(timeRangesForDay)):
             
@@ -209,10 +211,13 @@ def getFreeSpaceByDate(listOfTimeRanges):
         
         
 def emptyDate(cur, dayNum):
-    if(cur > dayNum):
-        return (7- cur) + dayNum
+    if(cur == dayNum):
+        return 0
+    elif(cur < dayNum):
+         return dayNum - cur 
     else:
-        return dayNum - cur 
+        return (7- cur) + dayNum
+
 
 def sortListOfTimeRangesByDate(listOfTimeRanges):
     #Iso weekday means monday is 1, sunday is 7
@@ -232,9 +237,14 @@ listOfTimeRanges = [
 freeMap = getFreeSpaceByDate(listOfTimeRanges)
 freeMap = getFreeSpaceByDate([])
 
-print("FreeMapStartsHere:")
-for i in freeMap:
-    for s,j in i:
-        print(i)
-        print([s.hour, j.hour])
-        
+
+#TESTING FOR EMPTY DATE
+
+if(True):
+    print(emptyDate(1,3))
+    print(emptyDate(1,1))
+    print(emptyDate(5,3))
+    print(emptyDate(2,1))
+    print(emptyDate(1,7))
+    print(emptyDate(7,1))
+

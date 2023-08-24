@@ -22,10 +22,10 @@ export function NewFillerEventForm(props){
     <label htmlFor='type'>Type</label>
     <select value={type} onChange={e => setType(e.target.value)}>
         <option>unassigned</option>
-        <option>Work</option>
-        <option>Relax</option>
-        <option>Creative</option>
-        <option>Social</option>
+        <option>work</option>
+        <option>active</option>
+        <option>passion</option>
+        <option>social</option>
     </select>
 
 
@@ -33,6 +33,7 @@ export function NewFillerEventForm(props){
     <select value={duration} onChange={e => setDuration(e.target.value)}>
         <option >15</option>
         <option >30</option>
+        <option >60</option>
     </select> 
     
     

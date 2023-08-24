@@ -437,7 +437,7 @@ def swapMeridien(meridien):
 # ------TEST CASES-------
 # Set to True to test getDate
 cd = "Thu Aug 10 2023 15:06:25 GMT-0400 (Eastern Daylight Time)"
-if(True):
+if(False):
     print(getDate(["Saturday"], cd)) # [8, 12]
     print(getDate(["Saturday the 5th"], cd)) # problem 5 or sat?
     print(getDate(["Saturday march 5th"], cd)) # problem 5 or sat
