@@ -131,11 +131,12 @@
 
  .legend{
   background-color: gray;
+  flex: auto;
  }
 
  .legend-element{
   color:red;
  }
 
-
+ 
 

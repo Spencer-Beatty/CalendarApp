@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import "./fillerEventForm.css"
 export function NewFillerEventForm(props){
     const [title, setTitle] = useState("")
     const [duration, setDuration] = useState("")
@@ -10,38 +10,49 @@ export function NewFillerEventForm(props){
         props.addFillerEvent(title, duration, type)
     }
 
-    return( <><form className='p' onSubmit={handleSubmit}>
-    <div>
-
-    <label htmlFor='item'>Filler Event</label>
-    <input value={title}
-    onChange={e => setTitle(e.target.value)}
-    placeholder='Enter Filler Event Name' required></input>
-   
-    
-    <label htmlFor='type'>Type</label>
-    <select value={type} onChange={e => setType(e.target.value)}>
+    return( <form className='filler-event-form' onSubmit={handleSubmit}>
+    <div className="filler-event-div">
+      <label className='form-label' htmlFor='item'>Filler Event</label>
+      <input
+        className='form-input'
+        value={title}
+        onChange={e => setTitle(e.target.value)}
+        placeholder='Enter Filler Event Name'
+        required
+      />
+  
+      <label className='form-label' htmlFor='type'>Type</label>
+      <select
+        className='form-select'
+        value={type}
+        onChange={e => setType(e.target.value)}
+      >
         <option>unassigned</option>
         <option>work</option>
         <option>active</option>
         <option>passion</option>
         <option>social</option>
-    </select>
-
-
-    <label htmlFor='duration'>Duration</label>
-    <select value={duration} onChange={e => setDuration(e.target.value)}>
-        <option >15</option>
-        <option >30</option>
-        <option >60</option>
-    </select> 
-    
-    
-    
+      </select>
+  
+      <label className='form-label' htmlFor='duration'>Duration</label>
+      <select
+        className='form-select'
+        value={duration}
+        onChange={e => setDuration(e.target.value)}
+      >
+        <option>15</option>
+        <option>30</option>
+        <option>60</option>
+      </select>
     </div>
-
-    <button className='btn-event'></button>
+  
+    <button className='filler-btn' type="submit">
+      <span className="ripple" id="ripple"></span>
+      Add Filler Event
+    </button>
   </form>
   
-  </>)
+  
+  
+  )
 }

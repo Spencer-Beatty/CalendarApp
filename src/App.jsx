@@ -13,6 +13,7 @@ import { postTaskToFirestore } from './FirebaseConfig.js';
 import { Zoning } from './Zoning'
 
 import { EventDisplay } from "./EventDisplay"
+import { Legend } from './Legend'
 
 
 import { CalendarEvent } from "./CalendarEvent"
@@ -447,28 +448,19 @@ console.log(calendarEvents)
       <div className="container">
 
 
-
-        <div className='left-side'>
-          <NewFixedEventForm addFixedEvents={addFixedEvents}></NewFixedEventForm>
-          <button onClick={e => setDisplayFixed(!displayFixed)}>Display FixedEvents</button>
-          {displayFixed && (<EventDisplay eventType={"fixedEvent"} events={fixedEvents} removeEvent={removeFixedEvent}></EventDisplay>)}
-
-          <NewFillerEventForm addFillerEvent={addFillerEvent}></NewFillerEventForm>
-          <button onClick={e => setDisplayFiller(!displayFiller)}>Display FixedEvents</button>
-          {displayFiller && (<EventDisplay eventType={"fillerEvent"} events={fillerEvents} removeEvent={removeFillerEvent}></EventDisplay>)}
-
-          <NewTaskForm addTask={addTask}></NewTaskForm>
-          <button onClick={e => setDisplayTasks(!displayTasks)}>Display FixedEvents</button>
-          {displayTasks && (<EventDisplay eventType={"task"} events={tasks} removeEvent={removeTask}></EventDisplay>)}
-
-
-        </div>
+      
+       
 
         <div className='middle-side'></div>
 
         <div className="right-side">
           
+          <div className="top-side">
+          <Legend></Legend>
+          
           <HeaderInfo callBreakdown={callBreakdown}></HeaderInfo>
+          <NewFillerEventForm addFillerEvent={addFillerEvent}></NewFillerEventForm>    
+      </div>
 
           <div className='calendar'>
 
@@ -576,3 +568,16 @@ console.log(calendarEvents)
       </div>
     </div>
   </div>*/
+
+  /* <div className='left-side'>
+          <NewFixedEventForm addFixedEvents={addFixedEvents}></NewFixedEventForm>
+          <button onClick={e => setDisplayFixed(!displayFixed)}>Display FixedEvents</button>
+          {displayFixed && (<EventDisplay eventType={"fixedEvent"} events={fixedEvents} removeEvent={removeFixedEvent}></EventDisplay>)}
+
+          <NewTaskForm addTask={addTask}></NewTaskForm>
+          <button onClick={e => setDisplayTasks(!displayTasks)}>Display FixedEvents</button>
+          {displayTasks && (<EventDisplay eventType={"task"} events={tasks} removeEvent={removeTask}></EventDisplay>)}
+
+          <button onClick={e => setDisplayFiller(!displayFiller)}>Display FixedEvents</button>
+          {displayFiller && (<EventDisplay eventType={"fillerEvent"} events={fillerEvents} removeEvent={removeFillerEvent}></EventDisplay>)}
+        </div>*/

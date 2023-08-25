@@ -31,6 +31,7 @@
 
 .calendar-header {
   border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+  flex: auto;
   display: flex;
   flex-direction: column;
   
@@ -165,6 +166,11 @@ button {
 
 .modal-element{
   width:100%;
+  display: flex;
+  justify-content: center;
+}
+
+.top-side{
   display: flex;
   justify-content: center;
 }

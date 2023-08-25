@@ -4,20 +4,13 @@ import "./app.css"
 export function HeaderInfo(props) {
   const [data, setData] = useState("")
 
-return( <>
+return( 
 
-  <div className="legend">
-    <h1>Legend</h1>
-    <p className="legend-element">Grey: Unassigned</p>
-    <p>Blue: Work</p>
-    <p>Green: Active</p>
-    <p>Orange: Passion</p>
-    <p>Red: Social</p>
-  </div>
+  
       <div className="calendar-header">
         <h1 className = "header title">Welcome Back</h1>
         <input className="header-input" value={data} onChange={e => setData(e.target.value)}></input>
         <button onClick={e => props.callBreakdown(data)}> <h1>Submit Event</h1></button>
       </div>
-      </>
+      
 )};

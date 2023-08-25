@@ -1,0 +1,200 @@
+/* Styling for the entire form */
+.filler-event-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+  }
+  
+  /* Styling for the container div */
+  .filler-event-div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
+    margin-bottom: 20px;
+  }
+  
+  /* Styling for labels */
+  .form-label {
+    font-weight: bold;
+  }
+  
+  /* Styling for input and select elements */
+  .form-input,
+  .form-select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+  }
+  
+  /* Styling for the button container */
+  .filler-btn {
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.3s;
+  }
+  
+  /* Ripple animation */
+  .ripple {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+  }
+  
+  @keyframes ripple-animation {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+  
+  /* Styling for the button text */
+  .filler-btn span {
+    display: block;
+    z-index: 1;
+    position: relative;
+  }
+  
+  /* Button styles */
+  .filler-btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .filler-btn:hover {
+    background-color: #0056b3;
+  }
+
+  /* Button styling */
+.filler-btn {
+    --text-base: 207, 55%, 40%;
+    --text-hover: 237, 72%, 86%;
+  
+    --shadow-start: 42, 100%, 72%;
+    --shadow-end: 47, 90%, 50%;
+  
+    --shadow-inner: 207, 90%, 62%;
+  
+    all: unset;
+  
+    /* Text */
+    color: hsla(var(--text-base), 1);
+    font: 700 1.125rem/1.2 Raleway, sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+  
+    /* Button sizing */
+    padding: 0.85em;
+    max-width: 100%;
+    width: 12em;
+  
+    /* Button styling */
+    background: inherit;
+    background-clip: padding-box;
+    border: 5px solid hsla(var(--text-base), 1);
+    border-radius: 2em;
+    cursor: pointer;
+  
+    /* Effects */
+    position: relative;
+    transition: 0.25s ease-out;
+  }
+  
+  button::before,
+  button::after {
+    content: "";
+    border-radius: inherit;
+    transition: inherit;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  
+  /* Gradient shadow */
+  button::before {
+    /* Position */
+    inset: -0.2em;
+    z-index: -1;
+  
+    /* Effect */
+    background: linear-gradient(hsla(var(--shadow-start), 1), hsla(var(--shadow-end), 1));
+    filter: blur(1.2em) saturate(1.2);
+  
+    /* Animation */
+    transform-origin: bottom;
+    transform: scaleY(0.5);
+    opacity: 0;
+  }
+  
+  /* Semi-transparent blended box-shadow brightens up the border */
+  button::after {
+    /* Effect */
+    box-shadow: inset 0 0 0 1px #fff, /* inner pixel */
+      0 0 0 4px hsla(0deg, 0%, 100%, 0.7), /* ligthened border */
+      1px 1px 0 4px #fff; /* outer pixel */
+    mix-blend-mode: overlay;
+  
+    /* Animation */
+    opacity: 0;
+  }
+  
+  button:hover,
+  button:focus {
+    color: hsla(var(--text-hover), 1);
+  
+    /* Lighten border */
+    border-color: transparent;
+  
+    /* Inner shadow */
+    box-shadow: 
+      inset 0 1.4em 0 hsla(var(--shadow-inner), 0.1), /* gloss */
+      inset 0 0 1.4em hsla(var(--shadow-inner), 0.32), /* inner glow */
+      0 1px 1px hsla(var(--shadow-inner), 0.32); /* bottom line */
+  
+    /* Show effects */
+    button::before,
+    button::after {
+      transform: none;
+      opacity: 1;
+    }
+  }
+  
+  /* Style the select dropdown */
+
+  
+  /* Style the options */
+  select option {
+    /* Reset default styles */
+    background-color: var(--darkgray);
+    color: #fff;
+    border: none;
+    padding: 0.5em 1em;
+  }
+  
+  /* Style the dropdown container */
+  .select {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Style the dropdown arrow */
+  .select::after {
+    content: '\25BC';
+    position: absolute;
+    top: 50%;
+    right: 1em;
+    transform: translateY(-50%);
+    color: #f39c12;
+    pointer-events: none;
+  }
+  
