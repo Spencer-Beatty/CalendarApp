@@ -1,5 +1,5 @@
 import React from "react";
-import "./eventDisplay.css"
+
 import { Event } from "./Event";
 
 export function EventDisplay(props){

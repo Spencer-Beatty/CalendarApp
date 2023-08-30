@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import "./app.css"
+
 import { NewFixedEventForm } from "./NewFixedEventForm"
 import { NewFillerEventForm } from "./NewFillerEventForm"
 import { NewTaskForm } from './NewTaskForm'
@@ -17,8 +17,10 @@ import { Legend } from './Legend'
 
 
 import { CalendarEvent } from "./CalendarEvent"
-import "./calendar.css"
+
 import { breakdownEventDescription,  fillSchedule  } from './PythonCommunicaton'
+
+import "./app.css"
 
 
 
@@ -75,6 +77,7 @@ export default function App() {
 
   const dayStart = 8 // 8 am
   const dayEnd = 20// 10 pm
+  const hourHeight=150;
 
  
 
@@ -89,7 +92,7 @@ export default function App() {
   
   useEffect(() => {
     // this number should be the start of day
-    calendarRef.current.scrollTop = 800
+    calendarRef.current.scrollTop = dayStart * hourHeight
     setCurrentDates(getCurrentDates())
 
     const fetchEvents = async () => {
@@ -175,7 +178,7 @@ async function checkFirestoreForZoningSchedule() {
 
   const getCurrentDates = () => {
     const dates = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 5; i++) {
       const date = new Date();
       date.setDate(date.getDate() + i);
       dates.push(date);
@@ -403,7 +406,99 @@ console.log(calendarEvents)
 
   return (
     <>
-    <button onClick={handleFill}>HandleFill</button>
+    
+
+      <div className="page">
+
+
+      
+       
+
+        <div className='left-tab'>
+        
+        <div className="left-tab-left"></div>  
+            <div className="left-tab-top"></div> 
+            
+            <div className='left-tab-option-container'>
+              <button className="left-tab-option">Calendar</button>
+              <button className="left-tab-option">Zoning</button>  
+              <button className='left-tab-option'>Filler</button>
+              <button className="left-tab-option">Task</button>  
+            </div>
+
+            <div className="left-tab-bottom"></div>   
+        </div>
+
+        <div className="right-tab">
+          
+          <div className='right-tab-header'>
+              <div className='month-year'>March 2023</div>
+              <button className='add-new-event-btn'>Add New Event</button>
+              
+          </div>
+
+          <div className='calendar'>
+            
+            
+            <div className='date-container'
+              ref={dateRef}
+              onScroll={handleScrollDate}>
+              {currentDates.map(event => {
+                return (<div className="date">
+                  <div className="date-num">{event.getDate()}</div>
+                  <div className="date-day">{intToDay(event.getDay())} </div>
+                  <div className='date-nib'></div>
+                </div>)
+              })}
+
+            </div>
+            
+            
+            <div className='day-container'
+              ref={calendarRef}
+              onScroll={handleScrollCalendar}>
+              <TimeList hourHeight={hourHeight}></TimeList>
+      
+    
+                
+              
+
+              {
+                currentDates.map(date => {
+                  return (
+                    
+                    <div className='events'> 
+                    
+                   
+                    
+                    {calendarEvents.map(event => {
+                    
+                    const dateEvent = new Date(event.startTime + "-0400")
+                    if ( dateEvent.getDate() === parseInt(date.getDate())) {
+                      return <CalendarEvent event={event} hourHeight={hourHeight}>Helo</CalendarEvent>
+                    }
+                    return null;
+
+                  })}</div> );
+
+                })
+              }
+
+
+
+            </div>
+
+          </div>
+          
+        </div>
+
+      </div>
+    </>)
+
+}
+/* You can have a check for date setting? 
+
+<button onClick={handleFill}>HandleFill</button>
       <div className="error-element" style={errorStyle}>
         <div className='modal'>
           <div className="flex">
@@ -445,88 +540,14 @@ console.log(calendarEvents)
         <div className="overlay hidden" ></div>
       </div>
 
-      <div className="container">
 
-
-      
-       
-
-        <div className='middle-side'></div>
-
-        <div className="right-side">
-          
-          <div className="top-side">
+<div className="top-side">
           <Legend></Legend>
           
           <HeaderInfo callBreakdown={callBreakdown}></HeaderInfo>
           <NewFillerEventForm addFillerEvent={addFillerEvent}></NewFillerEventForm>    
       </div>
 
-          <div className='calendar'>
-
-            
-            <div className='date-container'
-              ref={dateRef}
-              onScroll={handleScrollDate}>
-              <div className='date'>
-
-              </div>
-              {currentDates.map(event => {
-                return (<div className="date">
-                  <p className="date-num">{intToDay(event.getDay())} </p>
-                  <p className="date-day">{event.getDate()}</p>
-                </div>)
-              })}
-
-            </div>
-
-
-            <div className='days'
-              ref={calendarRef}
-              onScroll={handleScrollCalendar}>
-                
-      <Zoning 
-      initialZoningSchedule={initialZoningSchedule}
-        updateZoningSchedule={updateZoningSchedule}
-        checkFirestoreForZoningSchedule={checkFirestoreForZoningSchedule}
-        />
-    
-                
-              <TimeList></TimeList>
-
-              {
-                currentDates.map(date => {
-                  return (
-                    
-                    <div className='events'> 
-                    
-                   
-                    
-                    {calendarEvents.map(event => {
-                    
-                    const dateEvent = new Date(event.startTime + "-0400")
-                    if ( dateEvent.getDate() === parseInt(date.getDate())) {
-                      return <CalendarEvent event={event}>Helo</CalendarEvent>
-                    }
-                    return null;
-
-                  })}</div> );
-
-                })
-              }
-
-
-
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-    </>)
-
-}
-/* You can have a check for date setting? */
 /*<li className="event-item" key={event.id}>
             <h3>{event.title}</h3>
             <h3>{event.startTime} </h3>

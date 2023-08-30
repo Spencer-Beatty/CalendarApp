@@ -1,6 +1,6 @@
 import React from "react"
 import { useState } from "react"
-import "./app.css"
+
 export function HeaderInfo(props) {
   const [data, setData] = useState("")
 

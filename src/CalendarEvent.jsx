@@ -1,8 +1,9 @@
 import React from "react";
-import "./calendar.css"
+
 
 export function CalendarEvent(props){
-        const hourHeight = 100;
+        console.log(props.hourHeight)
+        const hourHeight = props.hourHeight;
         const minuteHeight = hourHeight / 60;
 
 
@@ -22,13 +23,13 @@ export function CalendarEvent(props){
             height: `${bottom - top}px`
         }
 
-        const eventClass = "event " +  props.event.type
+        const eventClass = "event-item " +  props.event.type
 
     return(
         <>
             <div className={eventClass} style={style}>
-                <div className="title">{props.event.title}</div>
-                <div className="time">{startHour} - {endHour}</div>
+                <div className="event-title">{props.event.title}</div>
+                <div className="event-time">{startHour} am</div>
 
 
 

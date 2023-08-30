@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import './Event.css';
+
 import { FixedEvent } from './FixedEvent';
 import { FillerEvent } from './FillerEvent';
 import { Task } from './Task';

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./fillerEventForm.css"
+
 export function NewFillerEventForm(props){
     const [title, setTitle] = useState("")
     const [duration, setDuration] = useState("")

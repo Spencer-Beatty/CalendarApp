@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./additionalInfoModal.css"
+
 
 export default function AdditionalInfoModal(props){
     
