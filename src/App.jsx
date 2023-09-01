@@ -12,8 +12,12 @@ import { postFillerEventToFirestore } from './FirebaseConfig.js';
 import { postTaskToFirestore } from './FirebaseConfig.js';
 import { Zoning } from './Zoning'
 
+
+
 import { EventDisplay } from "./EventDisplay"
 import { Legend } from './Legend'
+
+import Modal from './Modal.jsx'
 
 
 import { CalendarEvent } from "./CalendarEvent"
@@ -75,9 +79,21 @@ export default function App() {
   const [popup, setPopup] = useState("")
   const [errorStyle, setErrorStyle] = useState({ display: 'none' })
 
+  //References for left-tab-options
+  const calRef = useRef(null)
+  const zoneRef = useRef(null)
+  const fillRef = useRef(null)
+  const taskRef = useRef(null)
+  const [leftTabOption, setLeftTabOption] = useState(calRef)
+
+  const [leftTabTop, setLeftTabTop] = useState(0)
+  const [leftTabBottom, setLeftTabBottom] = useState(0)
+
   const dayStart = 8 // 8 am
   const dayEnd = 20// 10 pm
   const hourHeight=150;
+
+  const [addModal, setAddModal] = useState(false)
 
  
 
@@ -377,13 +393,6 @@ async function checkFirestoreForZoningSchedule() {
     return days[i];
   }
 
-
-
-
-
-
-
-
   const handleScrollDate = () => {
     
     if (calendarRef.current) {
@@ -398,7 +407,18 @@ async function checkFirestoreForZoningSchedule() {
     }
   };
 
-
+  useEffect(() => {
+    if(leftTabOption.current) {
+      const rect = leftTabOption.current.getBoundingClientRect();
+      console.log("rect.top" + rect.top)
+      console.log("rect.bottom" + rect.bottom)
+      console.log("rect.top+ windowYScroll" + window.scrollY)
+      
+      setLeftTabTop(rect.top)
+      setLeftTabBottom(rect.bottom + window.scrollY)
+    }
+  }, [leftTabOption])
+  
 
 
 
@@ -406,34 +426,32 @@ console.log(calendarEvents)
 
   return (
     <>
-    
-
-      <div className="page">
 
 
+          
       
-       
+      <div className="page">
 
         <div className='left-tab'>
         
-        <div className="left-tab-left"></div>  
-            <div className="left-tab-top"></div> 
+        
+            <div className="left-tab-top" style={{ top : 0 , height : leftTabTop}}></div> 
             
             <div className='left-tab-option-container'>
-              <button className="left-tab-option">Calendar</button>
-              <button className="left-tab-option">Zoning</button>  
-              <button className='left-tab-option'>Filler</button>
-              <button className="left-tab-option">Task</button>  
+              <button ref={calRef} className="left-tab-option" onClick={e => setLeftTabOption(calRef)}>Calendar</button>
+              <button ref={zoneRef} className="left-tab-option" onClick={e => setLeftTabOption(zoneRef)}>Zoning</button>  
+              <button ref={fillRef} className="left-tab-option" onClick={e => setLeftTabOption(fillRef)}>Filler</button>
+              <button ref={taskRef} className="left-tab-option" onClick={e => setLeftTabOption(taskRef)}>Task</button>  
             </div>
 
-            <div className="left-tab-bottom"></div>   
+            <div className="left-tab-bottom" style={{top: leftTabBottom}}></div>   
         </div>
 
         <div className="right-tab">
-          
+          <Modal></Modal>
           <div className='right-tab-header'>
               <div className='month-year'>March 2023</div>
-              <button className='add-new-event-btn'>Add New Event</button>
+              <button className='add-new-event-btn' onClick={e => setAddModal(true)}>Add New Event</button>
               
           </div>
 
@@ -497,6 +515,8 @@ console.log(calendarEvents)
 
 }
 /* You can have a check for date setting? 
+
+<div className="left-tab-left"></div>  
 
 <button onClick={handleFill}>HandleFill</button>
       <div className="error-element" style={errorStyle}>
