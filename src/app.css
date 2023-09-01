@@ -128,7 +128,7 @@ width: 80px;
 
 
 .events{
-    display :flex;
+    display :block;
     justify-content: center;
 }
 
@@ -255,4 +255,5 @@ width: 80px;
 .grey{
     background-color: #c8c8c8;
 }
+
 

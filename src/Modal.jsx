@@ -1,8 +1,9 @@
+import { useState } from "react"
 import React from "react"
 import "./modal.css"
 
 export default function Modal(props){
-
+    const [inputValue, setInputValue] = useState("")
     return(<>
         <div className="modal">
         <div className="modal-element" >
@@ -11,16 +12,16 @@ export default function Modal(props){
             <button className="modal-btn-close">⨉</button>
           </div>
 
-          <div className="modal-information">
-            <h3 className="modal-information-header">Stay in touch</h3>
-            <p>
-              
-            </p>
-          </div>
+          
+          <div className="modal-form-group">
+          
+          <input className="modal-input" value={inputValue} 
+            type="text" id="event" placeholder="ex. Add Meeting from 4-5pm on Tue" 
+            onChange={e => setInputValue(e.target.value)}/>
 
-          <input className="modal-input" value={""} 
-            type="email" id="email" placeholder="brendaneich@js.com" />
-          <button className="modal-submit-btn" >Submit</button>
+          <label for="event" class="modal-label">ex. Add Meeting from 4-5pm on Tue</label>
+          </div>
+          <button className="modal-btn-submit" onClick={() => {props.callBreakdown(inputValue); setInputValue("");}}>Submit</button>
 
 
         </div>

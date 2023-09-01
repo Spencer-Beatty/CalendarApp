@@ -431,7 +431,7 @@ console.log(calendarEvents)
           
       
       <div className="page">
-
+        
         <div className='left-tab'>
         
         
@@ -448,7 +448,7 @@ console.log(calendarEvents)
         </div>
 
         <div className="right-tab">
-          <Modal></Modal>
+          
           <div className='right-tab-header'>
               <div className='month-year'>March 2023</div>
               <button className='add-new-event-btn' onClick={e => setAddModal(true)}>Add New Event</button>
