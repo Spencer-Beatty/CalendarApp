@@ -9,7 +9,8 @@ export default function Modal(props){
         <div className="modal-element" >
           <div className="modal-btn-container">
 
-            <button className="modal-btn-close">⨉</button>
+            <button className="modal-btn-close" onClick={() => {setInputValue("");
+                                                               props.setEventModalActive(false)}}>⨉</button>
           </div>
 
           
@@ -21,7 +22,10 @@ export default function Modal(props){
 
           <label for="event" class="modal-label">ex. Add Meeting from 4-5pm on Tue</label>
           </div>
-          <button className="modal-btn-submit" onClick={() => {props.callBreakdown(inputValue); setInputValue("");}}>Submit</button>
+          <button className="modal-btn-submit" onClick={() => {props.callBreakdown(inputValue);
+                                                               setInputValue("");
+                                                               props.setEventModalActive(false)}}
+                                                               >Submit</button>
 
 
         </div>

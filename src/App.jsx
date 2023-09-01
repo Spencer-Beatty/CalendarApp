@@ -57,6 +57,8 @@ export default function App() {
   const activeModalRef = useRef(activeModal)
   const modalAnswerRef = useRef(modalAnswer)
 
+  const [eventModalActive,setEventModalActive] = useState(false)
+
   // state variables for boolean displays
   const [displayFixed, setDisplayFixed] = useState(false)
   const [displayFiller, setDisplayFiller] = useState(false)
@@ -428,7 +430,8 @@ console.log(calendarEvents)
     <>
 
 
-          
+        
+      {eventModalActive && <Modal callBreakdown={callBreakdown} setEventModalActive={setEventModalActive}></Modal>}
       
       <div className="page">
         
@@ -451,7 +454,7 @@ console.log(calendarEvents)
           
           <div className='right-tab-header'>
               <div className='month-year'>March 2023</div>
-              <button className='add-new-event-btn' onClick={e => setAddModal(true)}>Add New Event</button>
+              <button className='add-new-event-btn' onClick={e => setEventModalActive(true)}>Add New Event</button>
               
           </div>
 
