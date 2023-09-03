@@ -1,0 +1,53 @@
+
+.zoning-modal{
+    position: absolute;
+    left: 28.571% ;
+
+    width: 400px;
+    height: 100%;
+    min-height: 500px;
+    margin-top: 5%;
+    z-index: 3;
+
+    opacity: 0;
+    animation: fade 1s ease-out forwards;
+
+}
+
+@keyframes fade {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+
+
+.modal-overlay{
+    z-index: 1;
+    opacity: 0;
+    animation: fade 1s ease-out forwards;
+}
+
+.zoning-modal-element{
+   height: 532px;
+   background-color: #fff;
+   display: flex;
+   border-radius: 40px;
+   
+}
+
+
+.zoning-modal-form-group{
+    
+    
+    background: #ffffff; /* fallback for old browsers */
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    color: #fff;
+
+}

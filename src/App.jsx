@@ -10,6 +10,7 @@ import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import firebaseApp, { postEventToFirestore, deleteEventFromFirestore, LoadEventsFromFirestore, postZoningScheduleToFirestore,LoadZoningScheduleFromFirestore } from './FirebaseConfig.js';
 import { postFillerEventToFirestore } from './FirebaseConfig.js';
 import { postTaskToFirestore } from './FirebaseConfig.js';
+import ZoningModal from "./ZoningModal"
 import { Zoning } from './Zoning'
 
 
@@ -58,6 +59,7 @@ export default function App() {
   const modalAnswerRef = useRef(modalAnswer)
 
   const [eventModalActive,setEventModalActive] = useState(false)
+  const [zoningModalActive, setZoningModalActive] = useState(false)
 
   // state variables for boolean displays
   const [displayFixed, setDisplayFixed] = useState(false)
@@ -95,7 +97,7 @@ export default function App() {
   const dayEnd = 20// 10 pm
   const hourHeight=150;
 
-  const [addModal, setAddModal] = useState(false)
+  
 
  
 
@@ -416,10 +418,24 @@ async function checkFirestoreForZoningSchedule() {
       console.log("rect.bottom" + rect.bottom)
       console.log("rect.top+ windowYScroll" + window.scrollY)
       
+      console.log(zoneRef === leftTabOption)
+      console.log(zoningModalActive)
+      console.log(leftTabOption)
+      if(leftTabOption === zoneRef){
+        setZoningModalActive(true)
+      }else{
+
+        
+        setZoningModalActive(false)
+      }
+
+
       setLeftTabTop(rect.top)
       setLeftTabBottom(rect.bottom + window.scrollY)
     }
   }, [leftTabOption])
+
+
   
 
 
@@ -432,7 +448,9 @@ console.log(calendarEvents)
 
         
       {eventModalActive && <Modal callBreakdown={callBreakdown} setEventModalActive={setEventModalActive}></Modal>}
-      
+      {zoningModalActive && <ZoningModal setZoningModalActive={setZoningModalActive}></ZoningModal>}
+
+
       <div className="page">
         
         <div className='left-tab'>
