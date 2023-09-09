@@ -97,7 +97,7 @@ export default function App() {
   const dayEnd = 20// 10 pm
   const hourHeight=150;
 
-  
+  const [categories, setCategories] = useState([])
 
  
 
@@ -412,35 +412,41 @@ async function checkFirestoreForZoningSchedule() {
   };
 
   useEffect(() => {
+    console.log(window.innerHeight)
+    console.log(leftTabOption.current.getBoundingClientRect().top)
     if(leftTabOption.current) {
       const rect = leftTabOption.current.getBoundingClientRect();
-      console.log("rect.top" + rect.top)
-      console.log("rect.bottom" + rect.bottom)
-      console.log("rect.top+ windowYScroll" + window.scrollY)
       
-      console.log(zoneRef === leftTabOption)
-      console.log(zoningModalActive)
-      console.log(leftTabOption)
+      
+      
       if(leftTabOption === zoneRef){
         setZoningModalActive(true)
       }else{
 
-        
         setZoningModalActive(false)
+
       }
-
-
+      
+     
       setLeftTabTop(rect.top)
-      setLeftTabBottom(rect.bottom + window.scrollY)
+      setLeftTabBottom(rect.bottom )
     }
   }, [leftTabOption])
 
 
-  
+
+  useEffect(() => {
+    console.log("lefttabbottom: " + leftTabBottom)
+  }, [leftTabBottom])
 
 
 
-console.log(calendarEvents)
+
+  console.log(calendarEvents)
+
+
+
+
 
   return (
     <>
@@ -448,7 +454,12 @@ console.log(calendarEvents)
 
         
       {eventModalActive && <Modal callBreakdown={callBreakdown} setEventModalActive={setEventModalActive}></Modal>}
-      {zoningModalActive && <ZoningModal setZoningModalActive={setZoningModalActive}></ZoningModal>}
+      <ZoningModal zoningModalActive={zoningModalActive}
+                  setZoningModalActive={setZoningModalActive} 
+                  handleFill={handleFill}
+                  categories={categories}>
+                  
+      </ZoningModal>
 
 
       <div className="page">

@@ -10,31 +10,36 @@
     z-index: 3;
 
     opacity: 0;
-    animation: fade 1s ease-out forwards;
+    
 
 }
 
-@keyframes fade {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
 
 
 
-.modal-overlay{
+.zoning-modal-overlay{
+    
     z-index: 1;
     opacity: 0;
-    animation: fade 1s ease-out forwards;
+
+    position: absolute;
+    width: 100%;
+    height: 110%;
+    padding: 0px;
+    background-color:  rgba(181, 181, 181, 0.51);
+    
+    opacity: 0%;
 }
 
 .zoning-modal-element{
-   height: 532px;
-   background-color: #fff;
-   display: flex;
-   border-radius: 40px;
-   
+    width: 536px;
+    height: 441px;
+    flex-shrink: 0;
+    background-color: #fff;
+    display: flex;
+    border-radius: 40px;
+    justify-content: center;
+    align-items: center;
 }
 
 
@@ -51,3 +56,47 @@
     color: #fff;
 
 }
+
+
+.fade-in-1{
+  animation: fade-in .5s ease-out forwards;
+}
+
+.fade-in-1-2{
+  animation: fade-in .6s ease-out forwards;
+}
+
+@keyframes fade-in {
+    to {
+      opacity: 1;
+      
+    }
+  }
+
+  .fade-out-1{
+    opacity: 100%;
+    animation: fade-out 0.5s ease-out forwards;
+  }
+
+  .fade-out-1-2{
+    opacity: 100%;
+    animation: fade-out 0.6s ease-out forwards;
+  }
+
+  @keyframes fade-out{
+    to {
+      opacity: 0;
+      
+    }
+  }
+
+  .add-button{
+    height: 50px;
+    width: 100%;
+    
+    text-align: center;
+    border-radius: 20px;
+    background-color: rgb(144, 177, 144);
+    text-align: center;
+
+  }

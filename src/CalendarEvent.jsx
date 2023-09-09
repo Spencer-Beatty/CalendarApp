@@ -2,7 +2,7 @@ import React from "react";
 
 
 export function CalendarEvent(props){
-        console.log(props.hourHeight)
+        
         const hourHeight = props.hourHeight;
         const minuteHeight = hourHeight / 60;
 

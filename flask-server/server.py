@@ -171,7 +171,8 @@ def fillSchedule():
     fixedEvents = data.get('fixedEvents', [])
     zoningSchedule = data.get('zoningBlocks', [])
 
-    generatedEvents = schedule.createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, zoningSchedule)
+    generatedEvents = []
+    #generatedEvents = schedule.createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, zoningSchedule)
     
 
     
