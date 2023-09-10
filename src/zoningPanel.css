@@ -120,8 +120,93 @@ select {
 
   }
 
+  .add-category-div{
+    height: 50px;
+    width: 100%;
+    display: flex;
+    text-align: center;
+    border-radius: 20px;
+    background-color: rgb(144, 177, 144);
+    text-align: center;
+  }
 
+  .add-category-btn{
+    height: 50px;
+    width: 100%;
+    
+    text-align: center;
+    border-radius: 20px;
+    background-color: rgb(144, 177, 144);
+    text-align: center;
 
+  }
+
+.add-category-form{
+    align-items: center;
+    display: flex;
+    padding: 10px;
+}
+
+.add-category-input{
+    width: 100%;
+}
+.category-element{
+    height: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2px;
+    
+    border-radius: 5px;
+    background-color: rgb(144, 177, 144);
+  
+
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+}
+
+.hours-allotted-element{
+    width: 100%;
+    display: flex;
+    height: 50px;
+    margin-bottom: 2px;
+    justify-content: space-evenly;
+    align-items: center;
+    
+}
+
+.hours-allotted-button{
+    width: 25px;
+    height: 25px;
+    border-radius: 100px;
+    border: 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+    font-style: normal;
+}
+
+.hours-allotted-int{
+    width: 50px;
+    text-align: center;
+    font-size: 25px;
+    background-color: rgb(181, 181, 181);
+    border-radius: 25px;
+}
+
+.time-of-day-select{
+    height: 50px;
+    margin-bottom: 2px;
+    background-color: rgb(163, 163, 163);
+    text-align: center;
+}
 
 
 

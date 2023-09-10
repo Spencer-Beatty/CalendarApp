@@ -9,7 +9,13 @@ export default function ZoningModal(props){
         <>
         {props.zoningModalActive ? (<><div className="zoning-modal fade-in-1">
         <div className="zoning-modal-element" >
-          <ZoningPanel categories={props.categories}></ZoningPanel>
+          <ZoningPanel categories={props.categories}
+                       handleAddCategory={props.handleAddCategory}
+                       changeCategoryTimeOfDay={props.changeCategoryTimeOfDay}
+                       addCategoryAllottedHour={props.addCategoryAllottedHour}
+                       subCategoryAllottedHour={props.subCategoryAllottedHour}>
+                      
+          </ZoningPanel>
 
         </div>
         
@@ -18,19 +24,7 @@ export default function ZoningModal(props){
         
         (<><div className="zoning-modal fade-out-1">
         <div className="zoning-modal-element" >
-          <div className="zoning-modal-btn-container">
-
-            
-          <button className="zoning-modal-btn-close" onClick={() => {props.setZoningModalActive(false)}}>⨉</button>
-          </div>
-
           
-          <div className="zoning-modal-form-group">
-          
-          
-          </div>
-          
-          <button className="modal-btn-submit" onClick={props.handleFill()} >Submit</button>
 
         </div>
         

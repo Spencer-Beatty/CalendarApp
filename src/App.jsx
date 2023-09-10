@@ -136,6 +136,75 @@ export default function App() {
 
   }, []);
 
+  function handleAddCategory(newCategoryName){
+    
+    console.log(categories)
+
+    const newCategory = {
+      key: crypto.randomUUID(),
+      type: newCategoryName,
+      hoursAllotted: 0,
+      timeOfDay: "any"
+    }
+    setCategories(currentCategories => {
+      return([...currentCategories, newCategory])
+    })
+
+  }
+
+  function changeCategoryTimeOfDay(keyId, newTimeOfDay){
+    setCategories(categories.map(category => {
+
+      if(category.key === keyId){
+        const newCategory = {
+          key: keyId,
+          type: category.type,
+          hoursAllotted: category.hoursAllotted,
+          timeOfDay: newTimeOfDay
+        }
+        return newCategory
+      }else{
+        return category
+      }
+    }))
+
+  }
+
+  function addCategoryAllottedHour(keyId){
+    setCategories(categories.map(category => {
+
+      if(category.key === keyId){
+        const newCategory = {
+          key: keyId,
+          type: category.type,
+          hoursAllotted: category.hoursAllotted + 1,
+          timeOfDay: category.timeOfDay
+        }
+        return newCategory
+      }else{
+        return category
+      }
+    }))
+
+  }
+
+  function subCategoryAllottedHour(keyId){
+    setCategories(categories.map(category => {
+
+      if(category.key === keyId){
+        const newCategory = {
+          key: keyId,
+          type: category.type,
+          hoursAllotted: category.hoursAllotted - 1,
+          timeOfDay: category.timeOfDay
+        }
+        return newCategory
+      }else{
+        return category
+      }
+    }))
+
+  }
 
   useEffect(()=>{
     
@@ -457,8 +526,11 @@ async function checkFirestoreForZoningSchedule() {
       <ZoningModal zoningModalActive={zoningModalActive}
                   setZoningModalActive={setZoningModalActive} 
                   handleFill={handleFill}
-                  categories={categories}>
-                  
+                  categories={categories}
+                  handleAddCategory={handleAddCategory}
+                  changeCategoryTimeOfDay={changeCategoryTimeOfDay}
+                  addCategoryAllottedHour={addCategoryAllottedHour}
+                  subCategoryAllottedHour={subCategoryAllottedHour}>
       </ZoningModal>
 
 
