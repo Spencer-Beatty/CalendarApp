@@ -1,0 +1,105 @@
+.filler-panel{
+    position: relative;
+    margin: 10px;
+    flex-shrink: 0;
+    border-radius: 40px;
+    background: #D9D9D9;
+    width: 90%;
+    height: 90%;   
+    display: flex;
+    
+
+    color: #000;
+    text-align: center;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+    padding: 5px;
+}
+
+.new-filler-event{
+    flex: 1;
+    height: 100%;
+    display: block;
+}
+
+.new-filler-event-form{
+    width: 100%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    text-align: center;
+}
+
+/* Style the input element */
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+/* Style the input when it's in focus (clicked or selected) */
+input[type="text"]:focus {
+  border-color: #007bff; /* Change the border color on focus */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a subtle box-shadow */
+}
+
+/* Style placeholder text in the input */
+input[type="text"]::placeholder {
+  color: #999; /* Change the placeholder text color */
+}
+
+/* Style the input when it's disabled */
+input[type="text"]:disabled {
+  background-color: #f0f0f0; /* Change the background color for disabled inputs */
+  cursor: not-allowed; /* Change the cursor style for disabled inputs */
+}
+
+/* Add more styles as needed, such as hover effects or validation styles */
+
+
+.view-filler-event{
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    
+    
+}
+
+.view-filler-event-btn{
+    margin-top: 40%;
+    width: 60%;
+    height: 20%;
+    flex-shrink: 0;
+    border-radius: 25px;
+    background: #FB7272;
+    color: #FFF;
+    font-family: Inter;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    border-width: 0px;
+}
+
+.new-filler-event-form-submit-btn{
+   
+    
+    flex-shrink: 0;
+    border-radius: 25px;
+    background: #333333;
+    color: #ffffff;
+    font-family: Inter;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    border-width: 0px;
+}

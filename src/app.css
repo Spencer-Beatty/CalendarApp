@@ -246,4 +246,32 @@ width: 80px;
     background-color: #c8c8c8;
 }
 
-
+/* Style the select element */
+select {
+    appearance: none; /* Remove default arrow */
+    padding: 4px; /* Adjust padding as needed */
+    border: 0px solid #000000; /* Add a border */
+    border-radius: 40px; /* Make it round */
+    background-color: #ffffff; /* Background color */
+    font-family: 'Inter', sans-serif; /* Apply Inter font family */
+    font-size: 14px; /* Adjust font size as needed */
+    outline: none; /* Remove outline on focus */
+    text-align: center;
+  }
+  
+  /* Style the dropdown arrow (you can use an arrow icon instead) */
+  select::after {
+    content: '\25BC'; /* Unicode character for a down arrow */
+    position: absolute;
+    top: 50%;
+    right: 10px; /* Adjust the position of the arrow */
+    transform: translateY(-50%);
+    pointer-events: none; /* Allow clicking on the select box, not the arrow */
+  }
+  
+  /* Style the options within the dropdown */
+  select option {
+    font-family: 'Inter', sans-serif; /* Apply Inter font family */
+    font-size: 16px; /* Adjust font size as needed */
+    padding: 10px; /* Adjust padding as needed */
+  }
