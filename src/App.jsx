@@ -11,6 +11,8 @@ import firebaseApp, { postEventToFirestore, deleteEventFromFirestore, LoadEvents
 import { postFillerEventToFirestore } from './FirebaseConfig.js';
 import { postTaskToFirestore } from './FirebaseConfig.js';
 import ZoningModal from "./ZoningModal"
+import FillerModal from "./FillerModal"
+import TaskModal from "./TaskModal"
 import { Zoning } from './Zoning'
 
 
@@ -60,6 +62,8 @@ export default function App() {
 
   const [eventModalActive,setEventModalActive] = useState(false)
   const [zoningModalActive, setZoningModalActive] = useState(false)
+  const [fillerModalActive, setFillerModalActive] = useState(false)
+  const [taskModalActive, setTaskModalActive] = useState(false)
 
   // state variables for boolean displays
   const [displayFixed, setDisplayFixed] = useState(false)
@@ -487,14 +491,17 @@ async function checkFirestoreForZoningSchedule() {
       const rect = leftTabOption.current.getBoundingClientRect();
       
       
-      
+      setZoningModalActive(false)
+      setFillerModalActive(false)
+      setTaskModalActive(false)
       if(leftTabOption === zoneRef){
         setZoningModalActive(true)
-      }else{
-
-        setZoningModalActive(false)
-
+      }else if(leftTabOption === fillRef){
+        setFillerModalActive(true)
+      }else if(leftTabOption === taskRef){
+        setTaskModalActive(true)
       }
+      
       
      
       setLeftTabTop(rect.top)
@@ -532,6 +539,19 @@ async function checkFirestoreForZoningSchedule() {
                   addCategoryAllottedHour={addCategoryAllottedHour}
                   subCategoryAllottedHour={subCategoryAllottedHour}>
       </ZoningModal>
+
+      <FillerModal fillerModalActive={fillerModalActive}
+                   setFillerModalActive={setFillerModalActive}
+                   categories={categories}
+                   handleAddCategory={handleAddCategory}>          
+      </FillerModal>
+
+      <TaskModal taskModalActive={taskModalActive}
+                 setTaskModalActive={setTaskModalActive}
+                 categories={categories}
+                 handleAddCategory={handleAddCategory}>
+
+      </TaskModal>
 
 
       <div className="page">

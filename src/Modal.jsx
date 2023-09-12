@@ -6,7 +6,7 @@ export default function Modal(props){
     const [inputValue, setInputValue] = useState("")
     return(<>
         <div className="modal">
-        <div className="modal-element" >
+        <div className="new-event-modal-element" >
           <div className="modal-btn-container">
 
             <button className="modal-btn-close" onClick={() => {setInputValue("");
@@ -29,7 +29,7 @@ export default function Modal(props){
 
 
         </div>
-        <div className="modal-overlay" ></div>
+        <div className="new-event-modal-overlay" ></div>
       </div>
         
     </>)
