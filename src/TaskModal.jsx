@@ -11,7 +11,7 @@ export default function TaskModal(props){
         <div className="modal-element" >
           <TaskPanel categories={props.categories}
                        handleAddCategory={props.handleAddCategory}
-                       >
+                       addTask={props.addTask}>
                       
           </TaskPanel>
 

@@ -19,7 +19,7 @@ export const breakdownEventDescription = async(event_description, current_date) 
 };
 
 
-export const fillSchedule = async (fillerEvents, fixedEvents, zoningBlocks) => {
+export const fillSchedule = async (fillerEvents, fixedEvents, tasks, categories) => {
   const response = await fetch(`/fillSchedule`, {
     method: 'POST',
     headers: {
@@ -28,7 +28,8 @@ export const fillSchedule = async (fillerEvents, fixedEvents, zoningBlocks) => {
     body: JSON.stringify({
       fillerEvents: fillerEvents,
       fixedEvents: fixedEvents,
-      zoningBlocks: zoningBlocks,
+      tasks: tasks,
+      categories: categories,
     }),
   });
 

@@ -20,7 +20,8 @@ export function CalendarEvent(props){
         const style = {
             
             top: `${top}px`,
-            height: `${bottom - top}px`
+            height: `${bottom - top}px`,
+            backgroundColor: props.backgroundColor
         }
 
         const eventClass = "event-item " +  props.event.type

@@ -11,7 +11,7 @@ export default function FillerModal(props){
         <div className="modal-element" >
           <FillerPanel categories={props.categories}
                        handleAddCategory={props.handleAddCategory}
-                       >
+                       addFillerEvent={props.addFillerEvent}>
                       
           </FillerPanel>
 
@@ -20,7 +20,7 @@ export default function FillerModal(props){
       </div>
       <div className="modal-overlay fade-in-1-2" ></div></>) :
         
-        (<><div className="task-modal fade-out-1">
+        (<><div className="filler-modal fade-out-1">
         <div className="modal-element" >
           
 

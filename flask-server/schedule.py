@@ -6,7 +6,7 @@ import random
 import pytz
 
 
-def createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, zoningSchedule):
+def createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, tasks, categories):
     """
     This should create a zoning plan for the upcoming days
     input:
@@ -14,7 +14,8 @@ def createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, zoningSchedule):
         dayEnd (time)
         fixedEvents (list of events) {"date" : int / str, "startTime" : str (date), "endTime" : str (date), "title": str}
         fillerEvents (list of events) {"title" : str, "duration": [int,int], "type" : str}
-        zoningSchedule (list of events) {"schedule" : [str]}
+        tasks (list of events) {"title" : str, "timeRequired": str (form 1), "type" : str}
+        categories (list of categorys) {"type" : str, "hoursAllotted": str, "timeOfDay": str}
 
     output:
         list of events with{
@@ -24,152 +25,134 @@ def createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, zoningSchedule):
             type:
         }
     """
-    #Temporary variable may become an input later on, refers to how long each zone is in minutes
-    zoningMinutes = 30
+    dayStart = 8
+    dayEnd = 22
+    #Temporary variable may become an input later on, refers to how long each zone is in minute
 
-    #Create list of time ranges by taking the start and end times from fixed events
+    # Create list of time ranges by taking the start and end times from fixed events
     # [0 ] = starttime , [1] = endtime both are datetime objects (python)
     listOfTimeRanges = []
     for event in fixedEvents:
         newTimeRange = []
-        newTimeRange.append(datetime.fromisoformat(event["startTime"][:-5]))
-        newTimeRange.append(datetime.fromisoformat(event["endTime"][:-5]))
+        # NOTE if implementing localized timeZone change this, its a hot fix
+        newTimeRange.append(datetime.fromisoformat(event["startTime"][:-5]) - timedelta(hours=4))
+        newTimeRange.append(datetime.fromisoformat(event["endTime"][:-5])- timedelta(hours=4))
         listOfTimeRanges.append(newTimeRange)
 
     #Next sort list of time Ranges
     listOfTimeRanges.sort(key=customSort)
-    print("\n")
-    for i in listOfTimeRanges:
-        print(i[0])
-    print("\n")
+    
 
     #Search for free space and create freeSpace range for each day
 
     freeSpace = getFreeSpaceByDate(listOfTimeRanges)
-    
-    freeSpaceList = []
     print("FreeSpaces\n")
-    for timeRange in freeSpace:
-        for start, end in timeRange:
-            print(start, end)
-            freeSpaceList.extend(fillRange(start, end, fillerEvents, zoningSchedule))
+    for i in freeSpace:
+        print(i)
+        print("\n")
     
+    newCalendarEvents = []
     
-    return freeSpaceList
-
-    
-
-    
-    #Go through free space picking filler events to add based on zoning
-    #Find size of zoning by running forward until either hitting a difffernt type of
-    #Zoning or reaching the end of the freeSpace
     """
-    for space in freeSpace:
-        events = []
-        start = freeSpace[0]
-        currentZone = getZoneByTime(start, zoningSchedule, zoningMinutes, dayStart, dayEnd)
-        while(start>freeSpace[1]):
-            #
-            fillSpace(space, fillerEvents, zoningSchedule)
-            """
+    for timeRange in freeSpace:
+        #put time ranges into different categories:
+        timesOfDay = {"morning":[],"afternoon":[],"evening":[]}
+        for start, end in timeRange:
+            if(start.hour < timedelta(hours=(dayStart + (dayEnd - dayStart)/3))):
+                timesOfDay["morning"].append([start,end])
+            elif(start.hour < timedelta(hours=(dayStart + 2*(dayEnd - dayStart)/3))):
+                timesOfDay["afternoon"].append([start,end])
+            else:
+                timesOfDay["evening"].append([start,end])
+        for category in categories:
+            if(category["timeOfDay"] != "any"):
+                searchTime = timesOfDay[category["timeOfDay"]]
+    """
+                
+    for timeRange in freeSpace:   
+        
+        for start, end in timeRange:
+            
+            newCalendarEvents.extend(fillRange(start, end, fillerEvents, tasks, categories))
+            
 
 
-def fillRange(start, end, fillerEvents, zoningSchedule):
+    return newCalendarEvents
+
+
+def fillRange(start, end, fillerEvents,tasks, categories):
     """
     input:
         start (datetime) \n
         end (datetime) \n
         fillerEvents (list) type (str): {title(str), duration(int "minutes" ), priority (int)} \n
-        zoningSchedule (list) [str]
+        
 
     output:
         events (list) {title, startTime, endTime}
 
     """
-    events = []
-    current1 = start
-    current2 = start #Inititalize variable
-    #Set current2 to be equal to the start of the next zone that way we can iterate through
-    #Zones by simply adding the zoning minutes
-    if(start.minute < 30):
-        current2 = start.replace(minute=30)
-    else:
-        current2 = start.replace(minute=0) + timedelta(hours=1)
-    currentZone = getZoneByTime(current1, zoningSchedule, 30)
-    print("Starting While loop")
-    while(current2 < end):
-        
-        if(getZoneByTime(current2, zoningSchedule, 30) == currentZone):
-            #Zone is the same as the previous block, keep going
-            current2 += timedelta(minutes=30)
-            continue
+    """
+    check what time it is
+    """
+
+    newEvents = []
+    currentTime = start
+    while(currentTime < end):
+        if(dif(currentTime, end) < timedelta(minutes=15)):
+            #Here (15) is the smallest event could be changed to fit smallest event instead
+            break
         else:
-            #Zone is not the same so we can fill in the space 
-            #from current1 to current2 then set current1 to current2 and extend current2
-            options = [element for element in fillerEvents if element["type"] == currentZone]
-            size = current2 - current1
-            while(size > timedelta(hours=0)):
-                option = pickOption(size, options)
-                if(option == None):
-                    size = timedelta(hours=0)
-                    continue
-                eventLength = timedelta(minutes=int(option["duration"]))
-                size = size - eventLength
-                events.append({"title": option["title"],"startTime":current1, "endTime":current1+eventLength, "type":currentZone})
-                current1 += eventLength
-            current1 = current2
-            currentZone = getZoneByTime(current1, zoningSchedule, 30)
-            current2 += timedelta(minutes=30)
+            category = chooseCategory(categories)
+            event = fetchEvent( category, fillerEvents, tasks, maxSize=dif(currentTime, end))
+            if(event is None):
+                break
+            newEvent = constructEvent(event, currentTime)
+            currentTime = newEvent["endTime"]
             
-    #Deal with current1 to end
-    print(fillerEvents)
-    options = [element for element in fillerEvents if element["type"] == currentZone]
-    print(options)
-    size = end - current1
-    while(size > timedelta(hours=0)):
-                option = pickOption(size, options)
-                if(option == None):
-                    size = timedelta(hours=0)
-                    continue
-                eventLength = timedelta(minutes=int(option["duration"]))
-                size = size - eventLength
-                events.append({"title": option["title"],"startTime":current1, "endTime":current1+eventLength, "type":currentZone})
-                current1 += eventLength
-    print("Events")
-    return events
+            newEvents.append(newEvent)
 
-                
-            
+    #This code means the calendar can only run on eastern time, but it probably wouldn't be
+    #very hard to add some lines in to change to local timezone.
+    eastern = pytz.timezone('US/Eastern')
+    counter = 0
+    for event in newEvents:
+        event["startTime"] = eastern.localize(event["startTime"])
+        event["endTime"] = eastern.localize(event["endTime"])
+    return newEvents
 
 
 
-def pickOption(size, options):
+
+     
+def constructEvent(event, currentTime):
     """
-    size: timedelta object
+    requires date, startTime, endTime, title
+    """          
+    newEvent = {
+        "date": currentTime.day,
+        "title":event["title"],
+        "type":event["type"],
+        "startTime":currentTime,
+        "endTime":currentTime + timedelta(minutes=int(event["duration"]))
+    }
+    return newEvent
 
-    options: list filler items for that zone,
-             traits ( title, duration, type, priority)
+def dif(time1, time2):
+    
+    return time2 - time1
 
-    output:
-        chosen: ( title, duration, type, priority)
-    """
-    potentials = []
-    for i in options:
-        if(int(i["duration"]) <= size.seconds / 60):
-            potentials.append(i)
+def chooseCategory(categories):
+    return categories[random.randint(0, len(categories)-1)]
 
-    #For now just returns a random size
-    if(len(potentials) == 0):
-        return None
+def fetchEvent(category, fillerEvents, tasks, maxSize):
+    #do tasks later
+    
+    trimmedEvents = [i for i in fillerEvents if i["type"] == category["type"] and timedelta(minutes = int(i["duration"])) <= maxSize]
+    if(len(trimmedEvents) > 0):
+        return trimmedEvents[random.randrange(0, len(trimmedEvents))]
     else:
-        return potentials[random.randrange(0,len(potentials))]
-
-
-def getZoneByTime(time, zoningSchedule, zoningMinutes):
-    #Here we assume zoning schedule starts at 8 am
-    index = math.floor((time.hour - 8) * (60/zoningMinutes) + time.minute/zoningMinutes)
-    print(index)
-    return zoningSchedule[ index ]
+        return None
 
 
 
@@ -202,11 +185,16 @@ def getFreeSpaceByDate(listOfTimeRanges):
             currentStart, currentEnd = timeRangesForDay[counter]
             if(currentTime < currentStart):
                 freeTimeRangesForDay.append([currentTime, currentStart])
-            currentTime = currentEnd
+            if(currentTime < currentEnd):
+                #This check is for when the timerange is not on the current date 
+                # or there is a mixup in the order
+                currentTime = currentEnd
             counter+=1
         if(counter >= len(timeRangesForDay) and currentTime <= dayEnd):
             freeTimeRangesForDay.append([currentTime, dayEnd])
+            print(["time",currentTime, dayEnd],"\n")
         days.append(freeTimeRangesForDay)
+    
     return days
         
         
@@ -240,7 +228,7 @@ freeMap = getFreeSpaceByDate([])
 
 #TESTING FOR EMPTY DATE
 
-if(True):
+if(False):
     print(emptyDate(1,3))
     print(emptyDate(1,1))
     print(emptyDate(5,3))

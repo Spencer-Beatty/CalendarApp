@@ -165,20 +165,22 @@ def members():
 @app.route("/fillSchedule", methods=['POST'])
 def fillSchedule():
     data = request.get_json()
-    dayStart = 800 # 800 px
-    dayEnd = 2000
+    dayStart = 8 # 8 am will be passed through later
+    dayEnd = 22 # 10 pm
     fillerEvents = data.get('fillerEvents', [])
     fixedEvents = data.get('fixedEvents', [])
-    zoningSchedule = data.get('zoningBlocks', [])
+    tasks = data.get('tasks', [])
+    categories = data.get('categories', [])
 
     generatedEvents = []
     #generatedEvents = schedule.createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, zoningSchedule)
     
+    nschedule = schedule.createSchedule(dayStart, dayEnd, fixedEvents,fillerEvents, tasks, categories)
 
     
     #After Proccessing
     ap = {
-        "generatedEvents": generatedEvents,
+        "generatedEvents": nschedule,
     }
 
     return jsonify(ap)

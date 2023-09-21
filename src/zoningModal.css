@@ -100,13 +100,13 @@
   }
 
   .fade-out-1{
-    opacity: 100%;
-    animation: fade-out 0.5s ease-out forwards;
+    opacity: 0;
+    animation: fade-out 1s ease-out forwards;
   }
 
   .fade-out-1-2{
-    opacity: 100%;
-    animation: fade-out 0.6s ease-out forwards;
+    opacity: 1;
+    animation: fade-out 0.5s ease-out forwards;
   }
 
   @keyframes fade-out{

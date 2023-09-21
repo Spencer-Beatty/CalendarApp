@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, addDoc, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, deleteDoc, doc, getDocs, setDoc, updateDoc } from 'firebase/firestore';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -63,6 +63,7 @@ export function database() {
     const fixedEventsCollection = collection(db, 'fixedEvents');
     const fillerEventsCollection = collection(db, 'fillerEvents');
     const tasksCollection = collection(db, 'tasks');
+    const categoriesCollection = collection(db, 'categories');
     
 
     
@@ -71,6 +72,7 @@ export function database() {
         const fixedQuerySnapshot = await getDocs(fixedEventsCollection);
         const fillerQuerySnapshot = await getDocs(fillerEventsCollection);
         const tasksQuerySnapshot = await getDocs(tasksCollection);
+        const categoriesQuerySnapshot = await getDocs(categoriesCollection);
 
 
         const fixedEvents = fixedQuerySnapshot.docs.map((doc) => {
@@ -99,12 +101,17 @@ export function database() {
         id:crypto.randomUUID(), docRefNum: doc.id, ... doc.data()
     }))
 
+      const categories = categoriesQuerySnapshot.docs.map((doc) => ({
+        id:crypto.randomUUID(), docRefNum: doc.id, ... doc.data()
+      }))
+
 
 
         const eventsHolder=  {
           fixedEvents: fixedEvents,
           fillerEvents : fillerEvents,
-          tasks : tasks
+          tasks : tasks,
+          categories: categories,
     
         }
 
@@ -191,6 +198,68 @@ export function database() {
         console.log("error adding newFillerEvent");
         throw(error);
     }
+  };
+
+  export const postCategoryToFirestore = async (type, hoursAllotted, timeOfDay) => {
+    const db = getFirestore();
+
+    // Specify the collection where you want to store events
+    const eventsCollection = collection(db, 'categories');
+
+    const newCategory = {
+        type: type,
+        hoursAllotted: hoursAllotted,
+        timeOfDay: timeOfDay
+    }
+
+    try {
+        const docRef = await addDoc(eventsCollection, newCategory);
+        console.log('Category added with ID: ', docRef.id);
+        return docRef.id;
+    }catch(error){
+        console.log("error adding new Category");
+        throw(error);
+    }
+  };
+
+  export const postCategoryTimeOfDayToFirestore = async (docRefNum, newTimeOfDay) => {
+    const db = getFirestore();
+
+    // Specify the collection where you want to store events
+    const categoriesCollection = collection(db, 'categories');
+
+    try {
+      console.log(docRefNum)
+      const categoryRef = doc(categoriesCollection, docRefNum);
+      await updateDoc(categoryRef, {
+        timeOfDay:newTimeOfDay,
+      });
+      
+      console.log('Category '+docRefNum+' updated from Firestore successfully');
+    } catch (error) {
+      console.error('Error updating category: ', error);
+    }
+
+  };
+
+  export const postCategoryHoursAllottedToFirestore = async (docRefNum, newHoursAllotted) => {
+    const db = getFirestore();
+
+    // Specify the collection where you want to store events
+    const categoriesCollection = collection(db, 'categories');
+
+    try {
+      console.log(docRefNum)
+      const categoryRef = doc(categoriesCollection, docRefNum);
+      await updateDoc(categoryRef, {
+        hoursAllotted:newHoursAllotted,
+      });
+      
+      console.log('Category '+docRefNum+' updated from Firestore successfully');
+    } catch (error) {
+      console.error('Error updating category: ', error);
+    }
+
   };
 
   export const postTaskToFirestore = async (title, timeRequired, type) => {

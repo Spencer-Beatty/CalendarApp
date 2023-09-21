@@ -48,7 +48,10 @@ export default function ZoningPanel(props){
             <div className="zoning-panel-block category">
                 
                 {props.categories.map(category => {
-                    return(<div className="category-element">{category.type}</div>)
+                    return(<div className="category-element">
+                        <button onClick={() => props.handleRemoveCategory(category)}>Remove</button>
+                        {category.type}
+                        </div>)
                         }
                     )
                 }
@@ -72,9 +75,9 @@ export default function ZoningPanel(props){
                 
                 {props.categories.map(category => {
                     return(<div className="hours-allotted-element">
-                            <button className="hours-allotted-button" onClick={()=>props.subCategoryAllottedHour(category.key)}>-</button>
+                            <button className="hours-allotted-button" onClick={()=>props.subCategoryAllottedHour(category.docRefNum)}>-</button>
                             <div className="hours-allotted-int">{category.hoursAllotted}</div>
-                            <button className="hours-allotted-button" onClick={()=>props.addCategoryAllottedHour(category.key)}>+</button>
+                            <button className="hours-allotted-button" onClick={()=>props.addCategoryAllottedHour(category.docRefNum)}>+</button>
                             </div>)
                 })}
             </div>
@@ -82,7 +85,7 @@ export default function ZoningPanel(props){
             <div className="zoning-panel-block time-of-day">
                 
                 {props.categories.map(category => {
-                    return(<select className="time-of-day-select" value={category.timeOfDay} onChange={e=>props.changeCategoryTimeOfDay(category.key, e.target.value)}>
+                    return(<select className="time-of-day-select" value={category.timeOfDay} onChange={e=>props.changeCategoryTimeOfDay(category.docRefNum, e.target.value)}>
                         <option>any</option>
                         <option>morning</option>
                         <option>afternoon</option>

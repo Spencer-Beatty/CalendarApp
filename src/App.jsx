@@ -7,9 +7,9 @@ import { Event } from "./Event"
 import { HeaderInfo } from './HeaderInfo'
 import { TimeList } from './TimeList'
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import firebaseApp, { postEventToFirestore, deleteEventFromFirestore, LoadEventsFromFirestore, postZoningScheduleToFirestore,LoadZoningScheduleFromFirestore } from './FirebaseConfig.js';
+import firebaseApp, { postEventToFirestore, deleteEventFromFirestore, LoadEventsFromFirestore, postZoningScheduleToFirestore,LoadZoningScheduleFromFirestore} from './FirebaseConfig.js';
 import { postFillerEventToFirestore } from './FirebaseConfig.js';
-import { postTaskToFirestore } from './FirebaseConfig.js';
+import { postTaskToFirestore, postCategoryToFirestore, postCategoryTimeOfDayToFirestore, postCategoryHoursAllottedToFirestore } from './FirebaseConfig.js';
 import ZoningModal from "./ZoningModal"
 import FillerModal from "./FillerModal"
 import TaskModal from "./TaskModal"
@@ -92,6 +92,7 @@ export default function App() {
   const zoneRef = useRef(null)
   const fillRef = useRef(null)
   const taskRef = useRef(null)
+ 
   const [leftTabOption, setLeftTabOption] = useState(calRef)
 
   const [leftTabTop, setLeftTabTop] = useState(0)
@@ -102,8 +103,33 @@ export default function App() {
   const hourHeight=150;
 
   const [categories, setCategories] = useState([])
+  const [typeToColorMap, setTypeToColorMap] = useState({})
 
- 
+  useEffect(() => {
+    // Create a copy of the existing typeToColorMap
+    const updatedTypeToColorMap = { ...typeToColorMap };
+  
+    // Iterate through categories
+    categories.forEach(category => {
+      // Check if the category is not already in typeToColorMap
+      if (!updatedTypeToColorMap[category.type]) {
+        // Assign a color to the category (e.g., 'red')
+        updatedTypeToColorMap[category.type] = getRandomColor();
+      }
+    });
+  
+    // Update the state with the updated typeToColorMap
+    setTypeToColorMap(updatedTypeToColorMap);
+  }, [categories]);
+
+  function getRandomColor() {
+    const letters = 'BCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 5)];
+    }
+    return color;
+  }
 
   useEffect(() => {
     activeModalRef.current = activeModal;
@@ -125,6 +151,7 @@ export default function App() {
         
         const eventsFromData = await LoadEventsFromFirestore();
         
+        setCategories(eventsFromData.categories);
         setCalendarEvents(eventsFromData.fixedEvents);
         setFixedEvents(eventsFromData.fixedEvents);
         setFillerEvents(eventsFromData.fillerEvents);
@@ -140,11 +167,35 @@ export default function App() {
 
   }, []);
 
-  function handleAddCategory(newCategoryName){
+  async function handleRemoveCategory(categoryToBeDeleted){
+      try{
+        deleteEventFromFirestore(categoryToBeDeleted.docRefNum, "categories");
+        
+        const updatedCategories = categories.filter((category) => category.docRefNum !== categoryToBeDeleted.docRefNum);
+        
+        setCategories(updatedCategories)
+      }catch(e){
+        console.error("Couldn't delete properly", e)
+      }
+      
+     
     
+  }
+
+  async function handleAddCategory(newCategoryName){
+    
+
+    const matchingName = categories.filter((category) => category.type === newCategoryName)
+    console.log(matchingName)
+    if(matchingName.length > 0){
+      console.log("No bueno, this name already exists " + newCategoryName )
+    }
+    const docRefNum = await postCategoryToFirestore(newCategoryName, 0, "any");
+
     console.log(categories)
 
     const newCategory = {
+      docRefNum: docRefNum,
       key: crypto.randomUUID(),
       type: newCategoryName,
       hoursAllotted: 0,
@@ -158,14 +209,18 @@ export default function App() {
 
   function changeCategoryTimeOfDay(keyId, newTimeOfDay){
     setCategories(categories.map(category => {
-
+    
       if(category.key === keyId){
+        postCategoryTimeOfDayToFirestore(category.docRefNum, newTimeOfDay);
         const newCategory = {
+          docRefNum: category.docRefNum,
           key: keyId,
           type: category.type,
           hoursAllotted: category.hoursAllotted,
           timeOfDay: newTimeOfDay
         }
+        
+          
         return newCategory
       }else{
         return category
@@ -177,8 +232,10 @@ export default function App() {
   function addCategoryAllottedHour(keyId){
     setCategories(categories.map(category => {
 
-      if(category.key === keyId){
+      if(category.docRefNum === keyId){
+        postCategoryHoursAllottedToFirestore(category.docRefNum, category.hoursAllotted + 1)
         const newCategory = {
+          docRefNum: category.docRefNum,
           key: keyId,
           type: category.type,
           hoursAllotted: category.hoursAllotted + 1,
@@ -195,8 +252,10 @@ export default function App() {
   function subCategoryAllottedHour(keyId){
     setCategories(categories.map(category => {
 
-      if(category.key === keyId){
+      if(category.docRefNum === keyId){
+        postCategoryHoursAllottedToFirestore(category.docRefNum, category.hoursAllotted - 1)
         const newCategory = {
+          docRefNum: category.docRefNum,
           key: keyId,
           type: category.type,
           hoursAllotted: category.hoursAllotted - 1,
@@ -311,20 +370,34 @@ async function checkFirestoreForZoningSchedule() {
     callFillSchedule();
   }
 
+  function chooseColor(type){
+      if(type === 'fixed'){
+        return "lightblue"
+      }
+      return typeToColorMap[type]
+  }
   async function callFillSchedule(){
     console.log("fill schedule called")
 
     const data = async () => {
       try{
-        const schedule = await fillSchedule(fillerEvents, fixedEvents, zoningSchedule)
+        const schedule = await fillSchedule(fillerEvents, fixedEvents, tasks, categories)
         setCalendarEvents(currentEvents => {
           const updatedGeneratedEvents = schedule.generatedEvents.map(event => ({
             ...event,
-            startTime: event.startTime + "-0400",
-            endTime: event.endTime + "-0400"
+            startTime: event.startTime,
+            endTime: event.endTime,
+            styleColor: chooseColor(event.type)
           }));
+
+          const updatedFixedEvents = fixedEvents.map(event => ({
+            ...event,
+            startTime: event.startTime,
+            endTime: event.endTime,
+            styleColor: chooseColor("fixed")
+          }))
           
-          return [...fillerEvents, ...updatedGeneratedEvents];
+          return [...updatedFixedEvents, ...updatedGeneratedEvents];
         });
       
         console.log(schedule)
@@ -435,7 +508,7 @@ async function checkFirestoreForZoningSchedule() {
 
   //Add for fixedEvents
   async function addFixedEvents(title, startTime, endTime, date) {
-
+    //Example colour trying blue
     const docRefNum = await postEventToFirestore(title, startTime, endTime, date);
     console.log(docRefNum)
     setFixedEvents(currentEvents => {
@@ -501,7 +574,7 @@ async function checkFirestoreForZoningSchedule() {
       }else if(leftTabOption === taskRef){
         setTaskModalActive(true)
       }
-      
+
       
      
       setLeftTabTop(rect.top)
@@ -515,13 +588,16 @@ async function checkFirestoreForZoningSchedule() {
     console.log("lefttabbottom: " + leftTabBottom)
   }, [leftTabBottom])
 
-
-
+  useEffect(() => {
+    console.log("thurs")
+    const thurs = calendarEvents.filter(event =>  event.date===21 )
+    console.log(thurs)
+  },[calendarEvents])
 
   console.log(calendarEvents)
 
 
-
+console.log(typeToColorMap)
 
 
   return (
@@ -537,19 +613,22 @@ async function checkFirestoreForZoningSchedule() {
                   handleAddCategory={handleAddCategory}
                   changeCategoryTimeOfDay={changeCategoryTimeOfDay}
                   addCategoryAllottedHour={addCategoryAllottedHour}
-                  subCategoryAllottedHour={subCategoryAllottedHour}>
+                  subCategoryAllottedHour={subCategoryAllottedHour}
+                  handleRemoveCategory={handleRemoveCategory}>
       </ZoningModal>
 
       <FillerModal fillerModalActive={fillerModalActive}
                    setFillerModalActive={setFillerModalActive}
                    categories={categories}
-                   handleAddCategory={handleAddCategory}>          
+                   handleAddCategory={handleAddCategory}
+                   addFillerEvent={addFillerEvent}>          
       </FillerModal>
 
       <TaskModal taskModalActive={taskModalActive}
                  setTaskModalActive={setTaskModalActive}
                  categories={categories}
-                 handleAddCategory={handleAddCategory}>
+                 handleAddCategory={handleAddCategory}
+                 addTask={addTask}>
 
       </TaskModal>
 
@@ -561,7 +640,7 @@ async function checkFirestoreForZoningSchedule() {
         
             <div className="left-tab-top" style={{ top : 0 , height : leftTabTop}}></div> 
             
-            <div className='left-tab-option-container'>
+            <div  className='left-tab-option-container'>
               <button ref={calRef} className="left-tab-option" onClick={e => setLeftTabOption(calRef)}>Calendar</button>
               <button ref={zoneRef} className="left-tab-option" onClick={e => setLeftTabOption(zoneRef)}>Zoning</button>  
               <button ref={fillRef} className="left-tab-option" onClick={e => setLeftTabOption(fillRef)}>Filler</button>
@@ -575,6 +654,7 @@ async function checkFirestoreForZoningSchedule() {
           
           <div className='right-tab-header'>
               <div className='month-year'>March 2023</div>
+              <button className='add-new-event-btn grey' onClick={e=>handleFill()}>Fill Calendar</button>
               <button className='add-new-event-btn' onClick={e => setEventModalActive(true)}>Add New Event</button>
               
           </div>
@@ -617,7 +697,7 @@ async function checkFirestoreForZoningSchedule() {
                     
                     const dateEvent = new Date(event.startTime + "-0400")
                     if ( dateEvent.getDate() === parseInt(date.getDate())) {
-                      return <CalendarEvent event={event} hourHeight={hourHeight}>Helo</CalendarEvent>
+                      return <CalendarEvent event={event} hourHeight={hourHeight} backgroundColor={event.styleColor}>Helo</CalendarEvent>
                     }
                     return null;
 
