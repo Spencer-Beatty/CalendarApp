@@ -1,3 +1,4 @@
+import copy
 import re
 import calendar
 from datetime import datetime, timedelta
@@ -44,14 +45,20 @@ def createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, tasks, categorie
     
 
     #Search for free space and create freeSpace range for each day
-
+    
+    
     freeSpace = getFreeSpaceByDate(listOfTimeRanges)
+    
+    days = allocateCategoryPerDay(listOfTimeRanges, timedelta(hours=12))
+    print(days)
     print("FreeSpaces\n")
     for i in freeSpace:
         print(i)
         print("\n")
     
     newCalendarEvents = []
+    
+
     
     """
     for timeRange in freeSpace:
@@ -68,17 +75,32 @@ def createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, tasks, categorie
             if(category["timeOfDay"] != "any"):
                 searchTime = timesOfDay[category["timeOfDay"]]
     """
-                
+    counter = 1       
+    
     for timeRange in freeSpace:   
-        
+        print("counter",counter)
+        counter+=1
+        tempCategories = copy.deepcopy(categories)
         for start, end in timeRange:
+            nextRange, a = fillRange(start, end, fillerEvents, tasks, tempCategories)
+            for i in categories:
+                print(i["hoursAllotted"] , len(categories), end=" ")
+            print("\n")
+            newCalendarEvents.extend(nextRange)
             
-            newCalendarEvents.extend(fillRange(start, end, fillerEvents, tasks, categories))
             
 
-
+    
     return newCalendarEvents
 
+def allocateCategoryPerDay(freeTimeRanges, totalTime):
+    days = {1: totalTime, 2:totalTime, 3:totalTime, 4:totalTime, 5:totalTime, 6:totalTime, 7:totalTime}
+    zoningMap = {1: [], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[]}
+    for start, end in freeTimeRanges:
+        print("1",days[start.isoweekday()])
+        days[start.isoweekday()] = days[start.isoweekday()] - (end - start)
+        print("2",days[start.isoweekday()])
+    return days
 
 def fillRange(start, end, fillerEvents,tasks, categories):
     """
@@ -104,9 +126,13 @@ def fillRange(start, end, fillerEvents,tasks, categories):
             break
         else:
             category = chooseCategory(categories)
+            if(category == None):
+                break
             event = fetchEvent( category, fillerEvents, tasks, maxSize=dif(currentTime, end))
             if(event is None):
                 break
+            categories = deAllocateHours(categories, category, event["duration"])
+           
             newEvent = constructEvent(event, currentTime)
             currentTime = newEvent["endTime"]
             
@@ -119,10 +145,17 @@ def fillRange(start, end, fillerEvents,tasks, categories):
     for event in newEvents:
         event["startTime"] = eastern.localize(event["startTime"])
         event["endTime"] = eastern.localize(event["endTime"])
-    return newEvents
+    
+    return newEvents, categories
 
 
 
+def deAllocateHours(categories, category, duration):
+    for i in categories:
+        if(i["type"] == category["type"]):
+            i["hoursAllotted"] -= int(duration)/60
+            break
+    return categories
 
      
 def constructEvent(event, currentTime):
@@ -143,7 +176,28 @@ def dif(time1, time2):
     return time2 - time1
 
 def chooseCategory(categories):
-    return categories[random.randint(0, len(categories)-1)]
+    counter = 0
+    size = len(categories)
+    if(size == 0):
+        return None
+    while(counter < size -1 ):
+        
+        if(len(categories) <= 1):
+            if(len(categories) == 0):
+                return None
+            elif(categories[0]["hoursAllotted"] > 0):
+                return categories[0]
+            else:
+                categories.remove(categories[0])
+                return None
+        
+        index = random.randint(0, len(categories)-1)
+        attempt = categories[index]
+        if(attempt["hoursAllotted"] > 0):
+            return attempt
+        else:
+            categories.remove(attempt)
+    return None
 
 def fetchEvent(category, fillerEvents, tasks, maxSize):
     #do tasks later
