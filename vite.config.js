@@ -5,8 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   server: {
     proxy: {
-      '/members' : 'http://localhost:5000',
-      '/fillSchedule' : 'http://localhost:5000'
+      '/members' : 'http://https://fancy-lamington-93bf66.netlify.app/',
+      '/fillSchedule' : 'http://https://fancy-lamington-93bf66.netlify.app/'
     }
   },
   plugins: [react()],
