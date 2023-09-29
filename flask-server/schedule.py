@@ -83,8 +83,8 @@ def createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, tasks, categorie
         tempCategories = copy.deepcopy(categories)
         for start, end in timeRange:
             nextRange, a = fillRange(start, end, fillerEvents, tasks, tempCategories)
-            for i in categories:
-                print(i["hoursAllotted"] , len(categories), end=" ")
+            for i in tempCategories:
+                print(i["hoursAllotted"] , len(tempCategories), end=" ")
             print("\n")
             newCalendarEvents.extend(nextRange)
             
@@ -176,28 +176,21 @@ def dif(time1, time2):
     return time2 - time1
 
 def chooseCategory(categories):
-    counter = 0
-    size = len(categories)
-    if(size == 0):
-        return None
-    while(counter < size -1 ):
-        
-        if(len(categories) <= 1):
-            if(len(categories) == 0):
+    chosenIndexes = []
+    while(len(chosenIndexes) < len(categories)):
+        index = random.randint(0, len(categories)-1) 
+        counter = 0
+        while(index in chosenIndexes):
+            index = random.randint(0, len(categories)-1)
+            if(counter > 100):
                 return None
-            elif(categories[0]["hoursAllotted"] > 0):
-                return categories[0]
-            else:
-                categories.remove(categories[0])
-                return None
-        
-        index = random.randint(0, len(categories)-1)
-        attempt = categories[index]
-        if(attempt["hoursAllotted"] > 0):
-            return attempt
+            counter +=1
+        if(categories[index]["hoursAllotted"] > 0):
+            return categories[index]
         else:
-            categories.remove(attempt)
+            chosenIndexes.append(index)
     return None
+
 
 def fetchEvent(category, fillerEvents, tasks, maxSize):
     #do tasks later
