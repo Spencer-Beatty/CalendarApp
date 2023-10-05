@@ -1,0 +1,5 @@
+#[build]
+# ... other build settings ...
+
+[functions]
+directory = "netlify/functions"

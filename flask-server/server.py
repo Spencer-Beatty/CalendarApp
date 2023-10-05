@@ -1,4 +1,5 @@
-from flask import Flask, jsonify, request
+import requests
+import flask
 import schedule
 import re
 import math
@@ -13,8 +14,8 @@ app = Flask(__name__)
 #members API route
 @app.route("/members")
 def members():
-    eventDescription = request.args.get('name', default = "*", type = str)
-    currentDate = request.args.get('date', default = "*", type = str)
+    eventDescription = requests.args.get('name', default = "*", type = str)
+    currentDate = requests.args.get('date', default = "*", type = str)
     eventPrototype = {"title": "", "startTime": "","startTimeMeridien":"", "endTime": "","endTimeMeridien":"", "dateMonth": "", "dateDay": "", "additionalPrompts": []}
     
     # Whenever key information is missing or unclear a prompt will be added to additional prompts
