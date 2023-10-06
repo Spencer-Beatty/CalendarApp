@@ -511,11 +511,16 @@ async function checkFirestoreForZoningSchedule() {
     //Example colour trying blue
     const docRefNum = await postEventToFirestore(title, startTime, endTime, date);
     console.log(docRefNum)
+    const newFixedEvent = { id: crypto.randomUUID(), title: title, startTime: startTime, endTime: endTime, date: date, docRefNum: docRefNum }
     setFixedEvents(currentEvents => {
-      return [...currentEvents,
-      { id: crypto.randomUUID(), title: title, startTime: startTime, endTime: endTime, date: date, docRefNum: docRefNum }]
+      return [...currentEvents, newFixedEvent]
+    })
+    setCalendarEvents(currentEvents =>{
+      return [...currentEvents, newFixedEvent]
     })
   }
+
+  
 
   //Add for fillerEvents
   async function addFillerEvent(title, duration, type) {
