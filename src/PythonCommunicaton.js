@@ -38,6 +38,7 @@ export const fillSchedule = async (fillerEvents, fixedEvents, tasks, categories)
   return data;
 };
 /*
+#
 export const fillSchedule = async(fillerEvents, fixedEvents, zoningBlocks ) => {
 
   const data = fetch(`/fillSchedule?fillerEvents=${encodeURIComponent(JSON.stringify(fillerEvents))}&fixedEvents=${JSON.stringify(fixedEvents)}&zoningBlocks=${encodeURIComponent(JSON.stringify(zoningBlocks))}`).then(
