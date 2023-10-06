@@ -3,7 +3,7 @@
 
 export const breakdownEventDescription = async(event_description, current_date) => {
     
-    const data = fetch(`/members?name=${event_description}&date=${current_date}`).then(
+    const data = fetch(`https://spencerb320.pythonanywhere.com//members?name=${event_description}&date=${current_date}`).then(
       
       res => res.json()
     ).then(
@@ -20,7 +20,7 @@ export const breakdownEventDescription = async(event_description, current_date) 
 
 
 export const fillSchedule = async (fillerEvents, fixedEvents, tasks, categories) => {
-  const response = await fetch(`/fillSchedule`, {
+  const response = await fetch(`https://spencerb320.pythonanywhere.com/fillSchedule`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
