@@ -1,6 +1,6 @@
 # Calendar App
 
-The Calendar App is a web-based application that optimizes your daily schedule by filling available time slots with filler events based on your preferences and zoning.
+The Calendar App is a web-based application that optimizes your daily schedule by filling available time slots with filler events based on your preferences and zoning. This was developed as a personal project to enhance my React and Python skills while learning how to deploy and host to production environments. It also can hopefully serve as a useful tool for people better trying to manage their free time and allow open schedules to become more productive.
 
 ## Usage
 
