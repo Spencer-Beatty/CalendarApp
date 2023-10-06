@@ -5,7 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   server: {
     proxy: {
-      '/members' : 'https://spencerb320.pythonanywhere.com',
+      '/members' : {target: 'https://spencerb320.pythonanywhere.com',
+                    rewrite: 'https://spencerb320.pythonanywhere.com/members'},
       '/fillSchedule' : 'https://spencerb320.pythonanywhere.com'
     }
   },
