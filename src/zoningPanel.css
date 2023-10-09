@@ -21,7 +21,7 @@
 
 .zoning-panel-bottom{
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     margin-left: 5%;
     margin-right: 5%;
     gap: 3%
@@ -38,7 +38,7 @@
 
 .zoning-panel-block-titles{
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
     margin-left: 5%;
     margin-right: 5%;
     gap: 3%;
@@ -71,6 +71,19 @@
     line-height: normal;
 }
 
+.zoning-remove-btn{
+
+    flex-shrink: 0;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #000000;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    border-width: 0px;
+}
 
   
   .hours-unassigned{

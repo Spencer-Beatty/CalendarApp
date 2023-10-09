@@ -36,8 +36,13 @@ def createSchedule(dayStart, dayEnd, fixedEvents, fillerEvents, tasks, categorie
     for event in fixedEvents:
         newTimeRange = []
         # NOTE if implementing localized timeZone change this, its a hot fix
-        newTimeRange.append(datetime.fromisoformat(event["startTime"][:-5]) - timedelta(hours=4))
-        newTimeRange.append(datetime.fromisoformat(event["endTime"][:-5])- timedelta(hours=4))
+        try:
+            newTimeRange.append(datetime.fromisoformat(event["startTime"][:-5]) - timedelta(hours=4))
+            newTimeRange.append(datetime.fromisoformat(event["endTime"][:-5])- timedelta(hours=4))
+        except ValueError:
+            newTimeRange.append(datetime.fromisoformat(event["startTime"]) - timedelta(hours=4))
+            newTimeRange.append(datetime.fromisoformat(event["endTime"])- timedelta(hours=4))
+
         listOfTimeRanges.append(newTimeRange)
 
     #Next sort list of time Ranges

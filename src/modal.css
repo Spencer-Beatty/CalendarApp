@@ -14,20 +14,20 @@
 .new-event-modal-element{
     display: flex;
     flex-direction: column;
+    align-items: center;
     
-    width: 40%;
+    width: 60%;
     height: 40%;
     background-color: rgb(164, 164, 164);
     border-radius: 40px;
     margin-top: 10%;
     z-index: 1;
+    
 }
 
-.modal-btn-container{
 
-}
 
-.modal-btn-close{}
+
 
 
 .modal-information-header{
@@ -44,10 +44,35 @@
 }
 .modal-input{
     align-self: center;
+    
+}
+.modal-btn-container{
+    width: 95%;
+}
+.modal-btn-close{
+   
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  position: relative;
+  top: 10px;
+  left: 10px;
 }
 .modal-btn-submit{
-    align-self: center;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: 5px;
+    background: #4d5259;
+    width: 70%;
+    color: #FFF;
+    font-family: Inter;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    border-width: 0px;
 }
+
 .new-event-modal-overlay{
     position: absolute;
     width: 100%;
@@ -86,7 +111,7 @@
     
     background-color: rgb(255, 255, 255);
     border: none;
-    width: 90%;
+    width: 80%;
     display: block;
     border-bottom: 0.3rem solid transparent;
     transition: all 0.3s;
@@ -105,8 +130,10 @@
   
 
 .modal-form-group {
+    justify-self: center;
     height: 100vh;
-    width: 100%;
+    width: 80%;
+    border-radius: 25px;
     background: #0f2027; /* fallback for old browsers */
     background: linear-gradient(to right,#2c5364, #203a43, #0f2027);
     display: flex;

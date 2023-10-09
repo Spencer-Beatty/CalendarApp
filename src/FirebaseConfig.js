@@ -27,11 +27,12 @@ export function database() {
     return getFirestore(app);
   }
   // Comment
-  export const postEventToFirestore = async (title, startTime, endTime, date) => {
+  export const postEventToFirestore = async (title, startTime, endTime, date, name) => {
     const db = getFirestore();
 
+    const fe = 'fixedEvents' + "-" + name
     // Specify the collection where you want to store events
-    const eventsCollection = collection(db, 'fixedEvents');
+    const eventsCollection = collection(db, fe);
 
     // Create an object with event details to be stored in Firestore
     const newEvent = {
@@ -55,15 +56,17 @@ export function database() {
     
   };
 
-  export const LoadEventsFromFirestore = async () => {
+  export const LoadEventsFromFirestore = async (name) => {
 
     // Will load all data and then pass it back to be set to all state variables
     const db = getFirestore();
-
-    const fixedEventsCollection = collection(db, 'fixedEvents');
-    const fillerEventsCollection = collection(db, 'fillerEvents');
+    const fe = 'fixedEvents' + "-" + name
+    const ca = "categories" + "-" + name
+    const fillername = 'fillerEvents' + "-" + name
+    const fixedEventsCollection = collection(db, fe);
+    const fillerEventsCollection = collection(db, fillername);
     const tasksCollection = collection(db, 'tasks');
-    const categoriesCollection = collection(db, 'categories');
+    const categoriesCollection = collection(db, ca);
     
 
     
@@ -141,10 +144,12 @@ export function database() {
   };
  
 
-  export const deleteEventFromFirestore= async (docRefNum, eventType) => {
+  export const deleteEventFromFirestore= async (docRefNum, eventType, name) => {
     
     const db = getFirestore(app);
-    const eventsCollection = collection(db, eventType);
+
+    const col = eventType + "-" + name
+    const eventsCollection = collection(db, col);
 
     try {
       console.log(docRefNum)
@@ -178,11 +183,12 @@ export function database() {
     
   };
 
-  export const postFillerEventToFirestore = async (title, duration, type) => {
+  export const postFillerEventToFirestore = async (title, duration, type, name) => {
     const db = getFirestore();
 
     // Specify the collection where you want to store events
-    const eventsCollection = collection(db, 'fillerEvents');
+    const fillName = "fillerEvents" + "-" + name
+    const eventsCollection = collection(db, fillName);
 
     const newFillerEvent = {
         title: title,
@@ -200,11 +206,12 @@ export function database() {
     }
   };
 
-  export const postCategoryToFirestore = async (type, hoursAllotted, timeOfDay) => {
+  export const postCategoryToFirestore = async (type, hoursAllotted, timeOfDay, name) => {
     const db = getFirestore();
 
     // Specify the collection where you want to store events
-    const eventsCollection = collection(db, 'categories');
+    const ca = "categories" + "-" + name
+    const eventsCollection = collection(db, ca);
 
     const newCategory = {
         type: type,
@@ -222,11 +229,12 @@ export function database() {
     }
   };
 
-  export const postCategoryTimeOfDayToFirestore = async (docRefNum, newTimeOfDay) => {
+  export const postCategoryTimeOfDayToFirestore = async (docRefNum, newTimeOfDay, name) => {
     const db = getFirestore();
 
     // Specify the collection where you want to store events
-    const categoriesCollection = collection(db, 'categories');
+    const ca = "categories" + "-" + name
+    const categoriesCollection = collection(db, ca);
 
     try {
       console.log(docRefNum)
@@ -242,11 +250,12 @@ export function database() {
 
   };
 
-  export const postCategoryHoursAllottedToFirestore = async (docRefNum, newHoursAllotted) => {
+  export const postCategoryHoursAllottedToFirestore = async (docRefNum, newHoursAllotted, name) => {
     const db = getFirestore();
 
     // Specify the collection where you want to store events
-    const categoriesCollection = collection(db, 'categories');
+    const ca = "categories" + "-" + name
+    const categoriesCollection = collection(db, ca);
 
     try {
       console.log(docRefNum)

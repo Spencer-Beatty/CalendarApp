@@ -25,17 +25,20 @@ export function CalendarEvent(props){
         }
 
         const eventClass = "event-item " +  props.event.type
-
+        
     return(
         <>
-            <div className={eventClass} style={style}>
+            <button className={eventClass} style={style} onClick={() => props.removeEvent(props.event.id)}>
                 <div className="event-title">{props.event.title}</div>
-                <div className="event-time">{startHour} am</div>
+                {((bottom - top)/minuteHeight > 20 ) ? (
+                    
+                    startHour < 12 ? (<div className="event-time">{startHour} am </div>) :
+                                      (<div className="event-time">{startHour} pm </div>)
+                    ) : (
+                    <></>
+                )} 
 
-
-
-
-            </div>
+            </button>
 
 
         </>

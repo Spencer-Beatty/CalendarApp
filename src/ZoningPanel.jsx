@@ -41,7 +41,7 @@ export default function ZoningPanel(props){
         <div className="zoning-panel-block-titles">
             <div className="block-title">Category</div>
             <div className="block-title">Hours Allotted</div>
-            <div className="block-title">Time of Day</div>
+            
         </div>
         <div className="zoning-panel-bottom">
             
@@ -49,7 +49,7 @@ export default function ZoningPanel(props){
                 
                 {props.categories.map(category => {
                     return(<div className="category-element">
-                        <button onClick={() => props.handleRemoveCategory(category)}>Remove</button>
+                        <button className="zoning-remove-btn" onClick={() => props.handleRemoveCategory(category)}>Remove</button>
                         {category.type}
                         </div>)
                         }
@@ -82,7 +82,19 @@ export default function ZoningPanel(props){
                 })}
             </div>
             
-            <div className="zoning-panel-block time-of-day">
+            
+        </div>
+
+
+    </div>
+    )
+
+}
+
+/*
+<div className="block-title">Time of Day</div>
+
+<div className="zoning-panel-block time-of-day">
                 
                 {props.categories.map(category => {
                     return(<select className="time-of-day-select" value={category.timeOfDay} onChange={e=>props.changeCategoryTimeOfDay(category.docRefNum, e.target.value)}>
@@ -92,11 +104,4 @@ export default function ZoningPanel(props){
                         <option>evening</option>
                     </select>)
                 })}
-            </div>
-        </div>
-
-
-    </div>
-    )
-
-}
+            </div>*/

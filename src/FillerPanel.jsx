@@ -62,9 +62,7 @@ export default function FillerPanel(props){
 
 
             </div>
-            <div className="view-filler-event">
-                <button className="view-filler-event-btn"> View Filler Events </button>
-            </div>
+            
 
 
         </div>
@@ -73,3 +71,7 @@ export default function FillerPanel(props){
     
         )
 }
+
+/*<div className="view-filler-event">
+                <button className="view-filler-event-btn"> View Filler Events </button>
+            </div>*/
